@@ -20,11 +20,10 @@ package com.bananamilkshake.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
+import net.customware.gwt.presenter.client.DefaultEventBus;
+import net.customware.gwt.presenter.client.EventBus;
+import net.customware.gwt.presenter.client.place.PlaceManager;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -37,45 +36,16 @@ public class PhoneBook implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		Button add = new Button(messages.addButton(), new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.alert("Add new phone");
-			}
-		});
+		EventBus eventBus = new DefaultEventBus();
 		
-		Button edit = new Button(messages.editButton(), new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.alert("Edit");
-			}
-		});
+		PhoneBookPanel display = new PhoneBookPanel();
+		PhoneBookPresenter presenter = new PhoneBookPresenter(display, eventBus);
 		
-		Button remove = new Button(messages.removeButton(), new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.alert("Remove");
-			}
-		});
+		presenter.bind();
 		
-		Button showAll = new Button(messages.showAllButton(), new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.alert("Show");
-			}
-		});
+		RootPanel.get().add(presenter.getDisplay().asWidget());
 		
-		Button search = new Button(messages.searchButton(), new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.alert("Search");
-			}
-		});
-		
-		RootPanel.get("addButtonContainer").add(add);
-		RootPanel.get("editButtonContainer").add(edit);
-		RootPanel.get("removeButtonContainer").add(remove);
-		RootPanel.get("showAllButtonContainer").add(showAll);
-		RootPanel.get("searchButtonContainer").add(search);
+		PlaceManager placeManager = new PlaceManager(eventBus);
+		placeManager.fireCurrentPlace();
 	}
 }

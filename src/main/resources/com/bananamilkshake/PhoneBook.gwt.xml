@@ -7,6 +7,7 @@
   <inherits name='com.google.gwt.user.theme.standard.Standard'/>
 
   <!-- Other module inherits                                      -->
+  <inherits name='net.customware.gwt.presenter.Presenter' />
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.bananamilkshake.client.PhoneBook'/>
