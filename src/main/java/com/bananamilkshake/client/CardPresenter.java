@@ -34,15 +34,11 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
-
 	public static final Place PLACE = new Place("card");
 	
 	public static final String PARAM_ID = "id";
 	
-	private final PhoneBookServiceAsync service = GWT.create(PhoneBookService.class);
-	
-	private int cardId;
-	private Card card;
+	private static final PhoneBookServiceAsync service = GWT.create(PhoneBookService.class);
 	
 	public interface Display extends WidgetDisplay{
 		HasValue<String> getNameField();
@@ -83,19 +79,17 @@ public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 	}
 
 	@Override
-	protected void onPlaceRequest(PlaceRequest request) {
+	protected void onPlaceRequest(PlaceRequest request) {		
 		String idVal = request.getParameter(PARAM_ID, null);
 		if (idVal == null)
 			Window.alert("Empty card id in request parametr");
 		
 		try {
-			this.cardId = Integer.valueOf(idVal);
+			int cardId = Integer.valueOf(idVal);
+			this.showCard(cardId);
 		} catch (NumberFormatException exception) {
 			Window.alert("Wrong card id format for \"" + idVal + "\" (id must be an integer)");
-			return;
 		}
-		
-		this.showCard();
 	}
 
 	@Override
@@ -108,26 +102,19 @@ public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 		RootPanel.get().add(this.display.asWidget());
 	}
 
-	private void getCard() {		
-		this.service.get(this.cardId, new AsyncCallback<Card>() {
+	private void showCard(int cardId) {		
+		this.service.get(cardId, new AsyncCallback<Card>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("There is no card with id " + CardPresenter.this.cardId);
-				CardPresenter.this.card = null;
+				Window.alert("There is no card with id");
 			}
-
+			
 			@Override
-			public void onSuccess(Card result) {
-				CardPresenter.this.card = result;
+			public void onSuccess(Card card) {
+				CardPresenter.this.display.getNameField().setValue(card.getName());
+				CardPresenter.this.display.getPhoneField().setValue(card.getPhone());
 			}
 		});
-	}
-
-	private void showCard() {
-		this.getCard();
-		
-		this.display.getNameField().setValue(this.card.getName());
-		this.display.getPhoneField().setValue(this.card.getPhone());
 	}
 
 	private void edit() {
