@@ -20,9 +20,9 @@ package com.bananamilkshake.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.RootPanel;
 import net.customware.gwt.presenter.client.DefaultEventBus;
 import net.customware.gwt.presenter.client.EventBus;
+import net.customware.gwt.presenter.client.Presenter;
 import net.customware.gwt.presenter.client.place.PlaceManager;
 
 /**
@@ -39,15 +39,15 @@ public class PhoneBook implements EntryPoint {
 	public void onModuleLoad() {
 		EventBus eventBus = new DefaultEventBus();
 		
-		PhoneBookPresenter presenter = new PhoneBookPresenter(new PhoneBookPanel(), eventBus);
-		CardsListPresenter cardsPresenter = new CardsListPresenter(new CardsListPanel(), eventBus);
-		CardPresenter cardPresenter = new CardPresenter(new CardPanel(), eventBus);
+		Presenter []presenters = new Presenter[] {
+			new PhoneBookPresenter(new PhoneBookPanel(), eventBus),
+			new CardsListPresenter(new CardsListPanel(), eventBus),
+			new CardPresenter(new CardPanel(), eventBus)
+		};
 		
-		presenter.bind();
-		cardsPresenter.bind();
-		cardPresenter.bind();
-		
-		//RootPanel.get().add(presenter.getDisplay().asWidget());
+		for (Presenter presenter : presenters) {
+			presenter.bind();
+		}
 		
 		PlaceManager placeManager = new PlaceManager(eventBus);
 		placeManager.fireCurrentPlace();
