@@ -19,49 +19,66 @@
 package com.bananamilkshake.server;
 
 import com.bananamilkshake.client.PhoneBookService;
+import com.bananamilkshake.shared.Card;
 import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import static com.google.gwt.safehtml.shared.SafeHtmlUtils.htmlEscape;
+import java.util.ArrayList;
 
 /**
  * The server side implementation of the RPC service.
  */
 public class PhoneBookServiceImpl extends RemoteServiceServlet implements PhoneBookService {
 
+	@Override
 	public int add(String name, String phone) throws IllegalArgumentException {
 		name = htmlEscape(name);
 		phone = htmlEscape(phone);
 		
 		if (!FieldVerifier.isValidName(name)) {
-			throw new IllegalArgumentException("Name +\"" + name
-				+ " is not valid (must be not null or empty)");
+			throw new IllegalArgumentException("Name +\"" + name + " is not valid (must be not null or empty)");
 		}
 		
 		return 0;
 	}
 
-	public void showAll() {
-		
+	@Override
+	public ArrayList<Card> showAll() {
+		ArrayList<Card> res = new ArrayList<>();
+		res.add(new Card(1, "card1", "phone1"));
+		res.add(new Card(2, "card2", "phone2"));
+		res.add(new Card(3, "card3", "phone3"));
+		return res;
 	}
 	
-	public int search(String namePartToSearch) throws IllegalArgumentException {
+	@Override
+	public ArrayList<Card> search(String namePartToSearch) throws IllegalArgumentException {
 		namePartToSearch = htmlEscape(namePartToSearch);
 		
-		return 0;
+		ArrayList<Card> res = new ArrayList<>();
+		res.add(new Card(1, "searched_card1", "searched_phone1"));
+		res.add(new Card(2, "searched_card2", "searched_phone2"));
+		res.add(new Card(3, "searched_card3", "searched_phone3"));
+		return res;
 	}
 
+	@Override
 	public void edit(int id, String newName, String newPhone) throws IllegalArgumentException {
 		newName = htmlEscape(newName);
 		newPhone = htmlEscape(newPhone);
 		
 		if (!FieldVerifier.isValidName(newName)) {
-			throw new IllegalArgumentException("Name +\"" + newName
-				+ " is not valid (must be not null or empty)");
+			throw new IllegalArgumentException("Name +\"" + newName + " is not valid (must be not null or empty)");
 		}
 	}
 	
+	@Override
 	public void remove(int id) {
-		
+	}
+
+	@Override
+	public Card get(int id) {
+		return new Card(id, "name", "55588899");
 	}
 }

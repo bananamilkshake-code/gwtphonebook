@@ -25,11 +25,13 @@ import com.google.gwt.user.client.ui.HasValue;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
+import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Display> {
-	private Place PLACE = new Place("main");
+	
+	private final Place PLACE = new Place("phonebook");
 
 	public interface Display extends WidgetDisplay {
 		public HasClickHandlers getAddButton();
@@ -47,7 +49,7 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 	}
 	
 	@Override
-	protected void onBind() {
+	protected void onBind() {		
 		display.getAddButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -98,8 +100,14 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 
 	private void search() {
 		String toSearch = display.getSearchPatternText().getValue();
+		
+		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(CardsListPresenter.PLACE)
+				.with(CardsListPresenter.PARAM_ALL, "false")
+				.with(CardsListPresenter.PARAM_PATTERN, toSearch)));
 	}
 
 	private void showAll() {
+		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(CardsListPresenter.PLACE)
+				.with(CardsListPresenter.PARAM_ALL, "true")));
 	}
 }

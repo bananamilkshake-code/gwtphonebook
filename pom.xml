@@ -37,6 +37,7 @@
 			<groupId>net.customware.gwt.presenter</groupId>
 			<artifactId>gwt-presenter</artifactId>
 			<version>1.0.0</version>
+			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

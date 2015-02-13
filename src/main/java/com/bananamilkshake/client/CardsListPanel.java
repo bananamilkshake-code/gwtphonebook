@@ -18,26 +18,27 @@
 
 package com.bananamilkshake.client;
 
-import com.bananamilkshake.shared.Card;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import java.util.ArrayList;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
-/**
- * The client side stub for the RPC service.
- */
-@RemoteServiceRelativePath("phones")
-public interface PhoneBookService extends RemoteService {
+public class CardsListPanel extends Composite implements CardsListPresenter.Display {
 
-	public int add(String name, String phone) throws IllegalArgumentException;
-
-	public void edit(int id, String newName, String newPhone) throws IllegalArgumentException;
+	private final VerticalPanel panel = new VerticalPanel();
 	
-	public void remove(int id);
+	public CardsListPanel() {
+		initWidget(this.panel);
+	}
+	
+	@Override
+	public VerticalPanel getPanel() {
+		return this.panel;
+	}
+	
+	@Override
+	public void startProcessing() {
+	}
 
-	public ArrayList<Card> showAll();
-	
-	public ArrayList<Card> search(String name) throws IllegalArgumentException;
-	
-	public Card get(int id);
+	@Override
+	public void stopProcessing() {
+	}
 }
