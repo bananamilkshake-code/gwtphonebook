@@ -39,16 +39,15 @@ public class PhoneBook implements EntryPoint {
 	public void onModuleLoad() {
 		EventBus eventBus = new DefaultEventBus();
 		
-		PhoneBookPanel display = new PhoneBookPanel();
-		PhoneBookPresenter presenter = new PhoneBookPresenter(display, eventBus);
-		
-		CardsListPanel cardsPanel = new CardsListPanel();
-		CardsListPresenter cardsPresenter = new CardsListPresenter(cardsPanel, eventBus);
+		PhoneBookPresenter presenter = new PhoneBookPresenter(new PhoneBookPanel(), eventBus);
+		CardsListPresenter cardsPresenter = new CardsListPresenter(new CardsListPanel(), eventBus);
+		CardPresenter cardPresenter = new CardPresenter(new CardPanel(), eventBus);
 		
 		presenter.bind();
 		cardsPresenter.bind();
+		cardPresenter.bind();
 		
-		RootPanel.get().add(presenter.getDisplay().asWidget());
+		//RootPanel.get().add(presenter.getDisplay().asWidget());
 		
 		PlaceManager placeManager = new PlaceManager(eventBus);
 		placeManager.fireCurrentPlace();

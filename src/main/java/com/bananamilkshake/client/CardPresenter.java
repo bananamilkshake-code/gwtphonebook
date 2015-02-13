@@ -18,57 +18,57 @@
 
 package com.bananamilkshake.client;
 
+import com.bananamilkshake.shared.Card;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.RootPanel;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
-import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
-public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Display> {
-	
-	private final Place PLACE = new Place("");
+public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 
-	public interface Display extends WidgetDisplay {
-		public HasClickHandlers getAddButton();
-		public HasValue<String> getNameText();
-		public HasValue<String> getPhoneText();
-		
-		public HasClickHandlers getShowAllButton();
-		
-		public HasClickHandlers getSearchButton();
-		public HasValue<String> getSearchPatternText();
-	}
+	public static final Place PLACE = new Place("card");
 	
-	public PhoneBookPresenter(Display display, EventBus eventBus) {
+	public static final String PARAM_ID = "id";
+	
+	private final PhoneBookServiceAsync service = GWT.create(PhoneBookService.class);
+	
+	private int cardId;
+	private Card card;
+	
+	public interface Display extends WidgetDisplay{
+		HasValue<String> getNameField();
+		HasValue<String> getPhoneField();
+		
+		HasClickHandlers getEditButton();
+		HasClickHandlers getRemoveButton();
+	}
+
+	public CardPresenter(CardPresenter.Display display, EventBus eventBus) {
 		super(display, eventBus);
 	}
-	
+
 	@Override
 	protected void onBind() {
-		display.getAddButton().addClickHandler(new ClickHandler() {
+		this.display.getEditButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				PhoneBookPresenter.this.add();
+				CardPresenter.this.edit();
 			}
 		});
 		
-		display.getSearchButton().addClickHandler(new ClickHandler() {
+		this.display.getRemoveButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				PhoneBookPresenter.this.search();
-			}
-		});
-		
-		display.getShowAllButton().addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				PhoneBookPresenter.this.showAll();
+				CardPresenter.this.remove();
 			}
 		});
 	}
@@ -76,7 +76,7 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 	@Override
 	protected void onUnbind() {
 	}
-	
+
 	@Override
 	public Place getPlace() {
 		return PLACE;
@@ -84,6 +84,18 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 
 	@Override
 	protected void onPlaceRequest(PlaceRequest request) {
+		String idVal = request.getParameter(PARAM_ID, null);
+		if (idVal == null)
+			Window.alert("Empty card id in request parametr");
+		
+		try {
+			this.cardId = Integer.valueOf(idVal);
+		} catch (NumberFormatException exception) {
+			Window.alert("Wrong card id format for \"" + idVal + "\" (id must be an integer)");
+			return;
+		}
+		
+		this.showCard();
 	}
 
 	@Override
@@ -95,24 +107,32 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 		RootPanel.get().clear();
 		RootPanel.get().add(this.display.asWidget());
 	}
-	
-	private void add() {
-		String name = display.getNameText().getValue();
-		String phone = display.getPhoneText().getValue();
-		
-		
+
+	private void getCard() {		
+		this.service.get(this.cardId, new AsyncCallback<Card>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("There is no card with id " + CardPresenter.this.cardId);
+				CardPresenter.this.card = null;
+			}
+
+			@Override
+			public void onSuccess(Card result) {
+				CardPresenter.this.card = result;
+			}
+		});
 	}
 
-	private void search() {
-		String toSearch = display.getSearchPatternText().getValue();
+	private void showCard() {
+		this.getCard();
 		
-		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(CardsListPresenter.PLACE)
-				.with(CardsListPresenter.PARAM_ALL, "false")
-				.with(CardsListPresenter.PARAM_PATTERN, toSearch)));
+		this.display.getNameField().setValue(this.card.getName());
+		this.display.getPhoneField().setValue(this.card.getPhone());
 	}
 
-	private void showAll() {
-		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(CardsListPresenter.PLACE)
-				.with(CardsListPresenter.PARAM_ALL, "true")));
+	private void edit() {
+	}
+
+	private void remove() {
 	}
 }
