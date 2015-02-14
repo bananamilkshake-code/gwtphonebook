@@ -20,11 +20,10 @@ package com.bananamilkshake.server;
 
 import com.bananamilkshake.dispatcher.AddCard;
 import com.bananamilkshake.dispatcher.AddCardResult;
-import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class AddCardHandler implements ActionHandler<AddCard, AddCardResult> {
+public class AddCardHandler extends CardDataHandler<AddCard, AddCardResult> {
 	@Override
 	public Class<AddCard> getActionType() {
 		return AddCard.class;
@@ -39,11 +38,19 @@ public class AddCardHandler implements ActionHandler<AddCard, AddCardResult> {
 	 */
 	@Override
 	public AddCardResult execute(AddCard action, ExecutionContext context) throws DispatchException {
+		this.validateData(action.getName(), action.getPhone());
+		
 		return new AddCardResult(1);
 	}
 
 	@Override
 	public void rollback(AddCard action, AddCardResult result, ExecutionContext context) throws DispatchException {
 		// remove card by result.getAddedId();
+	}
+	
+	public class AddCardException extends DispatchException {
+		public AddCardException(String message) {
+			super(message);
+		}
 	}
 }

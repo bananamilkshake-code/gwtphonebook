@@ -21,6 +21,7 @@ package com.bananamilkshake.server;
 import com.bananamilkshake.dispatcher.CardsListResult;
 import com.bananamilkshake.dispatcher.Search;
 import com.bananamilkshake.shared.Card;
+import com.bananamilkshake.shared.FieldVerifier;
 import java.util.ArrayList;
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
@@ -34,6 +35,10 @@ public class SearchHandler implements ActionHandler<Search, CardsListResult> {
 
 	@Override
 	public CardsListResult execute(Search action, ExecutionContext context) throws DispatchException {
+		if (!FieldVerifier.isValidSearchPattern(action.getPattern())) {
+			throw new SearchException(action.getPattern());
+		}
+		
 		ArrayList<Card> cards = new ArrayList<>();
 		cards.add(new Card(1, "searched_card1", "searched_phone1"));
 		cards.add(new Card(2, "searched_card2", "searched_phone2"));
@@ -43,5 +48,11 @@ public class SearchHandler implements ActionHandler<Search, CardsListResult> {
 
 	@Override
 	public void rollback(Search action, CardsListResult result, ExecutionContext context) throws DispatchException {
+	}
+	
+	public class SearchException extends DispatchException {
+		public SearchException(String pattern) {
+			super("Wrong pattern \"" + pattern + "\"");
+		}
 	}
 }

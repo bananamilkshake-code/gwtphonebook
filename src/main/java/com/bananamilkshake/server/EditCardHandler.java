@@ -21,11 +21,10 @@ package com.bananamilkshake.server;
 import com.bananamilkshake.dispatcher.EditCard;
 import com.bananamilkshake.dispatcher.EditCardResult;
 import com.bananamilkshake.shared.Card;
-import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class EditCardHandler implements ActionHandler<EditCard, EditCardResult> {	
+public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {	
 	public EditCardHandler() {
 	}
 	
@@ -44,6 +43,8 @@ public class EditCardHandler implements ActionHandler<EditCard, EditCardResult> 
 	 */
 	@Override
 	public EditCardResult execute(EditCard action, ExecutionContext context) throws DispatchException {
+		this.validateData(action.getNewName(), action.getNewPhone());
+		
 		Card card = new Card(1, "a", "b");
 		
 		synchronized (card) {
