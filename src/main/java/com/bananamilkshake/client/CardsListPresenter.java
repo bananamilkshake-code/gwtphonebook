@@ -18,13 +18,18 @@
 
 package com.bananamilkshake.client;
 
+import com.bananamilkshake.dispatcher.ShowAll;
+import com.bananamilkshake.dispatcher.CardsListResult;
+import com.bananamilkshake.dispatcher.Search;
 import com.bananamilkshake.shared.Card;
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import java.util.ArrayList;
+import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
@@ -32,20 +37,20 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Display> {
-	
 	public static final Place PLACE = new Place("list");
+	
+	private final DispatchAsync dispatchAsync;
 	
 	public static final String PARAM_ALL = "all";
 	public static final String PARAM_PATTERN = "pattern";
-	
-	private final PhoneBookServiceAsync service = GWT.create(PhoneBookService.class);
 	
 	public interface Display extends WidgetDisplay {
 		VerticalPanel getPanel();
 	}
 	
-	public CardsListPresenter(Display display, EventBus eventBus) {
+	public CardsListPresenter(Display display, EventBus eventBus, final DispatchAsync dispatchAsync) {
 		super(display, eventBus);
+		this.dispatchAsync = dispatchAsync;
 	}
 	
 	@Override
@@ -65,10 +70,15 @@ public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Displ
 	protected void onPlaceRequest(PlaceRequest request) {
 		String paramAllValue = request.getParameter(PARAM_ALL, Boolean.toString(true));
 		if (Boolean.valueOf(paramAllValue)) {
-			this.service.showAll(new CardsListAsyncCallback());
+			this.dispatchAsync.execute(new ShowAll(), new CardsListAsyncCallback());
 		} else {
-			String pattern = request.getParameter(PARAM_PATTERN, null);
-			this.service.search(pattern, new CardsListAsyncCallback());
+			String patternVal = request.getParameter(PARAM_PATTERN, null);			
+			try {
+				RegExp pattern = RegExp.compile(patternVal);
+				this.dispatchAsync.execute(new Search(pattern), new CardsListAsyncCallback());
+			} catch (RuntimeException exception) {
+				Window.alert("Wrong pattern to search");
+			}
 		}
 	}
 
@@ -95,14 +105,15 @@ public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Displ
 		}
 	}
 	
-	private class CardsListAsyncCallback implements AsyncCallback<ArrayList<Card>> {
+	private class CardsListAsyncCallback implements AsyncCallback<CardsListResult> {
 		@Override
-		public void onFailure(Throwable caught) {
+		public void onFailure(Throwable exception) {
+			Window.alert("Error on cards request: " + exception.getMessage());
 		}
 
 		@Override
-		public void onSuccess(ArrayList<Card> cards) {
-			CardsListPresenter.this.showCards(cards);
+		public void onSuccess(CardsListResult result) {
+			CardsListPresenter.this.showCards(result.getCards());
 		}
 	}
 }

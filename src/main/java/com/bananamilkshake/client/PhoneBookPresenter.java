@@ -18,13 +18,22 @@
 
 package com.bananamilkshake.client;
 
+import com.bananamilkshake.dispatcher.AddCard;
+import com.bananamilkshake.dispatcher.AddCardResult;
+import com.bananamilkshake.dispatcher.EditCard;
+import com.bananamilkshake.dispatcher.EditCardResult;
+import com.bananamilkshake.dispatcher.RemoveCard;
+import com.bananamilkshake.dispatcher.RemoveCardResult;
 import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.RootPanel;
+import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
@@ -33,7 +42,9 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Display> {
-	private final Place PLACE = new Place("");
+	private static final Place PLACE = new Place("");
+	
+	private final DispatchAsync dispatchAsync;
 	
 	public interface Display extends WidgetDisplay {
 		public HasClickHandlers getAddButton();
@@ -54,34 +65,35 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 		public HasValue<String> getRemoveIdText();
 	}
 	
-	public PhoneBookPresenter(Display display, EventBus eventBus) {
+	public PhoneBookPresenter(Display display, EventBus eventBus, final DispatchAsync dispatchAsync) {
 		super(display, eventBus);
+		this.dispatchAsync = dispatchAsync;
 	}
 	
 	@Override
 	protected void onBind() {
-		display.getAddButton().addClickHandler(new ClickHandler() {
+		this.display.getAddButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				PhoneBookPresenter.this.add();
 			}
 		});
 		
-		display.getSearchButton().addClickHandler(new ClickHandler() {
+		this.display.getSearchButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				PhoneBookPresenter.this.search();
 			}
 		});
 		
-		display.getShowAllButton().addClickHandler(new ClickHandler() {
+		this.display.getShowAllButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				PhoneBookPresenter.this.showAll();
 			}
 		});
 		
-		display.getEditButton().addClickHandler(new ClickHandler() {
+		this.display.getEditButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				PhoneBookPresenter.this.edit();
@@ -125,6 +137,18 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 		
 		if (!CardFieldsVerification.verifyCardFields(name, phone))
 			return;
+		
+		this.dispatchAsync.execute(new AddCard(name, phone), new AsyncCallback<AddCardResult>() {
+			@Override
+			public void onFailure(Throwable exception) {
+				Window.alert("Error on adding card: " + exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(AddCardResult result) {
+				Window.alert("Card added. New id is " + result.getAddedId());
+			}
+		});
 	}
 
 	private void search() {
@@ -151,10 +175,35 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 		
 		if (!CardFieldsVerification.verifyCardFields(newName, newPhone))
 			return;
-	}
+		
+		int id = CardFieldsVerification.convertId(idVal);
+		
+		this.dispatchAsync.execute(new EditCard(id, newName, newPhone), new AsyncCallback<EditCardResult>() {
+			@Override
+			public void onFailure(Throwable exception) {
+				RootPanel.get().add(new HTML(exception.getMessage()));
+			}
 
+			@Override
+			public void onSuccess(EditCardResult result) {
+				RootPanel.get().add(new HTML("Card " + result.getCurrent().getId() + " successfully edited"));
+			}
+		});
+	}
 
 	private void remove() {
 		String idVal = this.display.getRemoveIdText().getValue();
+		int id = CardFieldsVerification.convertId(idVal);
+		
+		this.dispatchAsync.execute(new RemoveCard(id), new AsyncCallback<RemoveCardResult>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(RemoveCardResult result) {
+				Window.alert("Card removed");
+			}
+		});
 	}
 }

@@ -40,6 +40,11 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
+			<groupId>net.customware.gwt.dispatch</groupId>
+			<artifactId>gwt-dispatch</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
@@ -64,7 +69,8 @@
 							<goal>compile</goal>
 							<goal>test</goal>
 							<goal>i18n</goal>
-							<goal>generateAsync</goal>
+							<goal>mergewebxml</goal>
+							<!-- <goal>generateAsync</goal> -->
 						</goals>
 					</execution>
 				</executions>

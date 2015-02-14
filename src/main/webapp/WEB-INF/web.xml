@@ -4,16 +4,15 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-
 	<!-- Servlets -->
 	<servlet>
 		<servlet-name>phoneBookServlet</servlet-name>
-		<servlet-class>com.bananamilkshake.server.PhoneBookServiceImpl</servlet-class>
+		<servlet-class>com.bananamilkshake.server.PhoneBookService</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>phoneBookServlet</servlet-name>
-		<url-pattern>/PhoneBook/phones</url-pattern>
+		<url-pattern>/PhoneBook/dispatch</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

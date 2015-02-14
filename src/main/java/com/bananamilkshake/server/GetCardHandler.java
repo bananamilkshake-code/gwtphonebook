@@ -16,28 +16,28 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.bananamilkshake.client;
+package com.bananamilkshake.server;
 
+import com.bananamilkshake.dispatcher.GetCard;
+import com.bananamilkshake.dispatcher.GetCardResult;
 import com.bananamilkshake.shared.Card;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import java.util.ArrayList;
+import net.customware.gwt.dispatch.server.ActionHandler;
+import net.customware.gwt.dispatch.server.ExecutionContext;
+import net.customware.gwt.dispatch.shared.DispatchException;
 
-/**
- * The client side stub for the RPC service.
- */
-@RemoteServiceRelativePath("phones")
-public interface PhoneBookService extends RemoteService {
+public class GetCardHandler implements ActionHandler<GetCard, GetCardResult>{
+	@Override
+	public Class<GetCard> getActionType() {
+		return GetCard.class;
+	}
 
-	public int add(String name, String phone) throws IllegalArgumentException;
+	@Override
+	public GetCardResult execute(GetCard action, ExecutionContext context) throws DispatchException {
+		Card card = new Card(action.getId(), "card name", "phone");
+		return new GetCardResult(card);
+	}
 
-	public void edit(int id, String newName, String newPhone) throws IllegalArgumentException;
-	
-	public void remove(int id);
-
-	public ArrayList<Card> showAll();
-	
-	public ArrayList<Card> search(String name) throws IllegalArgumentException;
-	
-	public Card get(int id);
+	@Override
+	public void rollback(GetCard a, GetCardResult r, ExecutionContext ec) throws DispatchException {
+	}
 }

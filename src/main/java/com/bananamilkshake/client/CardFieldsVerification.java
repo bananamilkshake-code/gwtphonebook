@@ -45,5 +45,12 @@ public class CardFieldsVerification {
 		
 		return true;
 	}
-
+	
+	public static int convertId(String idVal) {
+		if (idVal == null || idVal.isEmpty()) {
+			Window.alert("Id is empty");
+		}
+		
+		return Integer.valueOf(idVal);
+	}
 }

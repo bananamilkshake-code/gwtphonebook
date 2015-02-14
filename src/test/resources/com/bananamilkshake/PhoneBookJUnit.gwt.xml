@@ -4,6 +4,6 @@
   <inherits name='com.bananamilkshake.PhoneBook'/>
 
   <!-- Specify the path to any remote services.                   -->
-  <servlet path="/PhoneBook/phones" class="com.bananamilkshake.server.PhoneBookServiceImpl" />
+  <servlet path="/PhoneBook/dispatch" class="com.bananamilkshake.server.PhoneBookService" />
 
 </module>

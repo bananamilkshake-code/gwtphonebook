@@ -18,8 +18,9 @@
 
 package com.bananamilkshake.client;
 
+import com.bananamilkshake.dispatcher.GetCard;
+import com.bananamilkshake.dispatcher.GetCardResult;
 import com.bananamilkshake.shared.Card;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -27,6 +28,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.RootPanel;
+import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
@@ -34,11 +36,11 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
+	private final DispatchAsync dispatchAsync;
+	
 	public static final Place PLACE = new Place("card");
 	
 	public static final String PARAM_ID = "id";
-	
-	private static final PhoneBookServiceAsync service = GWT.create(PhoneBookService.class);
 	
 	public interface Display extends WidgetDisplay{
 		HasValue<String> getNameField();
@@ -48,8 +50,9 @@ public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 		HasClickHandlers getRemoveButton();
 	}
 
-	public CardPresenter(CardPresenter.Display display, EventBus eventBus) {
+	public CardPresenter(CardPresenter.Display display, EventBus eventBus, final DispatchAsync dispatchAsync) {
 		super(display, eventBus);
+		this.dispatchAsync = dispatchAsync;
 	}
 
 	@Override
@@ -102,18 +105,20 @@ public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 		RootPanel.get().add(this.display.asWidget());
 	}
 
-	private void showCard(int cardId) {		
-		this.service.get(cardId, new AsyncCallback<Card>() {
+	private void showCard(int cardId) {
+		this.dispatchAsync.execute(new GetCard(cardId), new AsyncCallback<GetCardResult>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert("There is no card with id");
 			}
-			
+
 			@Override
-			public void onSuccess(Card card) {
+			public void onSuccess(GetCardResult result) {
+				Card card = result.getCard();
+				
 				CardPresenter.this.display.getNameField().setValue(card.getName());
 				CardPresenter.this.display.getPhoneField().setValue(card.getPhone());
-			}
+			}	
 		});
 	}
 

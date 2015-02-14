@@ -37,7 +37,7 @@ public class Card implements Comparable<Card>, Serializable {
 		this.name = name;
 		this.phone = phone;
 	}
-	
+
 	/**
 	 * Get card id.
 	 * @return card id

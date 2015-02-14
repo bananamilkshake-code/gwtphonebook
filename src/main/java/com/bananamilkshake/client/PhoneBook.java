@@ -19,7 +19,9 @@
 package com.bananamilkshake.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
+import net.customware.gwt.dispatch.client.DefaultExceptionHandler;
+import net.customware.gwt.dispatch.client.DispatchAsync;
+import net.customware.gwt.dispatch.client.standard.StandardDispatchAsync;
 import net.customware.gwt.presenter.client.DefaultEventBus;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.Presenter;
@@ -28,21 +30,19 @@ import net.customware.gwt.presenter.client.place.PlaceManager;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class PhoneBook implements EntryPoint {
-
-	private final Messages messages = GWT.create(Messages.class);
-	
+public class PhoneBook implements EntryPoint {	
 	/**
 	 * This is the entry point method.
 	 */
 	@Override
 	public void onModuleLoad() {
 		EventBus eventBus = new DefaultEventBus();
+		DispatchAsync dispatchAsync = new StandardDispatchAsync(new DefaultExceptionHandler());
 		
 		Presenter []presenters = new Presenter[] {
-			new PhoneBookPresenter(new PhoneBookPanel(), eventBus),
-			new CardsListPresenter(new CardsListPanel(), eventBus),
-			new CardPresenter(new CardPanel(), eventBus)
+			new PhoneBookPresenter(new PhoneBookPanel(), eventBus, dispatchAsync),
+			new CardsListPresenter(new CardsListPanel(), eventBus, dispatchAsync),
+			new CardPresenter(new CardPanel(), eventBus, dispatchAsync)
 		};
 		
 		for (Presenter presenter : presenters) {
