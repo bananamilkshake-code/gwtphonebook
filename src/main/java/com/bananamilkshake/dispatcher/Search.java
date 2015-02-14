@@ -22,16 +22,16 @@ import com.google.gwt.regexp.shared.RegExp;
 import net.customware.gwt.dispatch.shared.Action;
 
 public class Search implements Action<CardsListResult> {
-	private RegExp pattern;
+	private String pattern;
 	
 	Search() {
 	}
 	
-	public Search(RegExp pattern) {
+	public Search(String pattern) {
 		this.pattern = pattern;
 	}
 	
-	public RegExp getPattern() {
+	public String getPattern() {
 		return pattern;
 	}
 }

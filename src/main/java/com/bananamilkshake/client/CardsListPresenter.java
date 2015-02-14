@@ -72,9 +72,8 @@ public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Displ
 		if (Boolean.valueOf(paramAllValue)) {
 			this.dispatchAsync.execute(new ShowAll(), new CardsListAsyncCallback());
 		} else {
-			String patternVal = request.getParameter(PARAM_PATTERN, null);			
+			String pattern = request.getParameter(PARAM_PATTERN, null);		
 			try {
-				RegExp pattern = RegExp.compile(patternVal);
 				this.dispatchAsync.execute(new Search(pattern), new CardsListAsyncCallback());
 			} catch (RuntimeException exception) {
 				Window.alert("Wrong pattern to search");
@@ -108,7 +107,7 @@ public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Displ
 	private class CardsListAsyncCallback implements AsyncCallback<CardsListResult> {
 		@Override
 		public void onFailure(Throwable exception) {
-			Window.alert("Error on cards request: " + exception.getMessage());
+			Window.alert("Exception " + exception.getClass() + " on cards request: " + exception.getMessage());
 		}
 
 		@Override
