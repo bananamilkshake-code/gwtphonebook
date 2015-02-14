@@ -118,6 +118,11 @@ public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 	}
 
 	private void edit() {
+		String newName = this.display.getNameField().getValue();
+		String newPhone = this.display.getPhoneField().getValue();
+		
+		if (!CardFieldsVerification.verifyCardFields(newName, newPhone))
+			return;
 	}
 
 	private void remove() {

@@ -18,6 +18,8 @@
 
 package com.bananamilkshake.shared;
 
+import com.google.gwt.regexp.shared.RegExp;
+
 /**
  * <p>
  * FieldVerifier validates that the name the user enters is valid.
@@ -40,6 +42,12 @@ package com.bananamilkshake.shared;
  */
 public class FieldVerifier {
 
+	private static final RegExp PHONE_PATTERN;
+	
+	static {
+		PHONE_PATTERN = RegExp.compile("(\\d{11})");
+	}
+	
 	/**
 	 * Verifies that the specified name is valid for our service.
 	 *
@@ -50,5 +58,30 @@ public class FieldVerifier {
 	 */
 	public static boolean isValidName(String name) {
 		return (name != null && !name.isEmpty());
+	}
+	
+	/**
+	 * Verifies that the specified phone is valid for our service.
+	 * 
+	 * Phone must be string of eleven digits without any other symbols.
+	 * 
+	 * @param phone
+	 * @return true if valid, false if invalid
+	 */
+	public static boolean isValidPhone(String phone) {
+		return (phone != null && PHONE_PATTERN.test(phone));
+	}
+
+	public static boolean isValidSearchPattern(String toSearch) {
+		if (toSearch == null)
+			return false;
+		
+		try {
+			RegExp.compile(toSearch);
+		} catch (RuntimeException exception) {
+			return false;
+		}
+		
+		return true;
 	}
 }

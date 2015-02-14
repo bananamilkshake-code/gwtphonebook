@@ -18,9 +18,11 @@
 
 package com.bananamilkshake.client;
 
+import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.RootPanel;
 import net.customware.gwt.presenter.client.EventBus;
@@ -121,11 +123,16 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 		String name = display.getNameText().getValue();
 		String phone = display.getPhoneText().getValue();
 		
-		
+		if (!CardFieldsVerification.verifyCardFields(name, phone))
+			return;
 	}
 
 	private void search() {
 		String toSearch = display.getSearchPatternText().getValue();
+		if (!FieldVerifier.isValidSearchPattern(toSearch)) {
+			Window.alert("Invalid search pattern. Must be a regular expression.");
+			return;
+		}
 		
 		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(CardsListPresenter.PLACE)
 				.with(CardsListPresenter.PARAM_ALL, "false")
@@ -142,6 +149,8 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 		String newName = this.display.getEditNameText().getValue();
 		String newPhone = this.display.getPhoneText().getValue();
 		
+		if (!CardFieldsVerification.verifyCardFields(newName, newPhone))
+			return;
 	}
 
 
