@@ -42,27 +42,27 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	
 	private final Button showAllButton = new Button();
 	
-	private enum Tabs {
-		ADD ("add"),
-		SHOW_ALL ("show_all"),
-		SEARCH ("search");
-		
-		final String asString;
-		
-		Tabs(final String asString) {
-			this.asString = asString;
-		}
-	};
+	private final Button editButton = new Button();
+	private final TextBox editIdText = new TextBox();
+	private final TextBox editNameText = new TextBox();
+	private final TextBox editPhoneText = new TextBox();
+	
+	private final Button removeButton = new Button();
+	private final TextBox removeIdText = new TextBox();
 	
 	public PhoneBookPanel() {
 		this.addButton.setText(messages.addButton());
 		this.searchButton.setText(messages.searchButton());
 		this.showAllButton.setText(messages.showAllButton());
+		this.editButton.setText(messages.editButton());
+		this.removeButton.setText(messages.removeButton());
 		
 		initWidget(this.tabPanel);
 		this.createAddTab();
 		this.createShowAllTab();
 		this.createSearchTab();
+		this.createEditTab();
+		this.createRemoveTab();
 		
 		this.tabPanel.selectTab(0);
 	}
@@ -95,6 +95,36 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	@Override
 	public HasValue<String> getSearchPatternText() {
 		return this.searchPatternText;
+	}
+
+	@Override
+	public HasClickHandlers getEditButton() {
+		return this.editButton;
+	}
+
+	@Override
+	public HasValue<String> getEditIdText() {
+		return this.editIdText;
+	}
+
+	@Override
+	public HasClickHandlers getRemoveButton() {
+		return this.removeButton;
+	}
+
+	@Override
+	public HasValue<String> getRemoveIdText() {
+		return this.removeIdText;
+	}
+
+	@Override
+	public HasValue<String> getEditNameText() {
+		return this.editNameText;
+	}
+
+	@Override
+	public HasValue<String> getEditPhoneText() {
+		return this.editPhoneText;
 	}
 	
 	@Override
@@ -140,5 +170,37 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 		panel.add(this.searchButton);
 		
 		this.tabPanel.add(panel, messages.searchTabLabel());
+	}
+
+	private void createEditTab() {
+		FlowPanel panel = new FlowPanel();
+		
+		Label idLabel = new Label(messages.idLabel());
+		Label editNameLabel = new Label(messages.editNameLabel());
+		Label editPhoneLabel = new Label(messages.editPhoneLabel());
+		
+		panel.add(idLabel);
+		panel.add(this.editIdText);
+		panel.add(editNameLabel);
+		panel.add(this.editNameText);
+		panel.add(editPhoneLabel);
+		panel.add(this.phoneText);
+		
+		panel.add(this.editButton);
+		
+		this.tabPanel.add(panel, messages.editTabLabel());
+	}
+
+	private void createRemoveTab() {
+		FlowPanel panel = new FlowPanel();
+		
+		Label idLabel = new Label(messages.idLabel());
+		
+		panel.add(idLabel);
+		panel.add(this.removeIdText);
+		
+		panel.add(this.removeButton);
+		
+		this.tabPanel.add(panel, messages.removeTabLabel());
 	}
 }

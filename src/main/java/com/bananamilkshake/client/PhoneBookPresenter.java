@@ -31,9 +31,8 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Display> {
-	
 	private final Place PLACE = new Place("");
-
+	
 	public interface Display extends WidgetDisplay {
 		public HasClickHandlers getAddButton();
 		public HasValue<String> getNameText();
@@ -43,6 +42,14 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 		
 		public HasClickHandlers getSearchButton();
 		public HasValue<String> getSearchPatternText();
+		
+		public HasClickHandlers getEditButton();
+		public HasValue<String> getEditIdText();
+		public HasValue<String> getEditNameText();
+		public HasValue<String> getEditPhoneText();
+		
+		public HasClickHandlers getRemoveButton();
+		public HasValue<String> getRemoveIdText();
 	}
 	
 	public PhoneBookPresenter(Display display, EventBus eventBus) {
@@ -69,6 +76,20 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 			@Override
 			public void onClick(ClickEvent event) {
 				PhoneBookPresenter.this.showAll();
+			}
+		});
+		
+		display.getEditButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				PhoneBookPresenter.this.edit();
+			}
+		});
+		
+		display.getRemoveButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				PhoneBookPresenter.this.remove();
 			}
 		});
 	}
@@ -114,5 +135,17 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 	private void showAll() {
 		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(CardsListPresenter.PLACE)
 				.with(CardsListPresenter.PARAM_ALL, "true")));
+	}
+
+	private void edit() {
+		String idVal = this.display.getEditIdText().getValue();
+		String newName = this.display.getEditNameText().getValue();
+		String newPhone = this.display.getPhoneText().getValue();
+		
+	}
+
+
+	private void remove() {
+		String idVal = this.display.getRemoveIdText().getValue();
 	}
 }
