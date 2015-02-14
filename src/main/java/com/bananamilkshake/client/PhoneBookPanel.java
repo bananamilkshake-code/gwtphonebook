@@ -184,7 +184,7 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 		panel.add(editNameLabel);
 		panel.add(this.editNameText);
 		panel.add(editPhoneLabel);
-		panel.add(this.phoneText);
+		panel.add(this.editPhoneText);
 		
 		panel.add(this.editButton);
 		
