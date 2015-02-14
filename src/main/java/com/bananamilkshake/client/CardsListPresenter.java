@@ -22,7 +22,6 @@ import com.bananamilkshake.dispatcher.ShowAll;
 import com.bananamilkshake.dispatcher.CardsListResult;
 import com.bananamilkshake.dispatcher.Search;
 import com.bananamilkshake.shared.Card;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Hyperlink;

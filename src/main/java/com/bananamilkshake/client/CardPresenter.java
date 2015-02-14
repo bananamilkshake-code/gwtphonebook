@@ -33,14 +33,13 @@ import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
-import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
-public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
-	private final DispatchAsync dispatchAsync;
-	
+public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {	
 	public static final Place PLACE = new Place("card");
 	
 	public static final String PARAM_ID = "id";
+	
+	private int cardId;
 	
 	public interface Display extends WidgetDisplay{
 		HasValue<String> getNameField();
@@ -51,8 +50,23 @@ public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 	}
 
 	public CardPresenter(CardPresenter.Display display, EventBus eventBus, final DispatchAsync dispatchAsync) {
-		super(display, eventBus);
-		this.dispatchAsync = dispatchAsync;
+		super(display, eventBus, dispatchAsync);
+	}
+
+	@Override
+	protected void onEditCardSuccess() {
+	}
+
+	@Override
+	protected void onEditCardFailure(Throwable exception) {
+	}
+
+	@Override
+	protected void onRemoveCardSuccess() {
+	}
+
+	@Override
+	protected void onRemoveCardFailure(Throwable exception) {
 	}
 
 	@Override
@@ -85,10 +99,9 @@ public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 	protected void onPlaceRequest(PlaceRequest request) {		
 		String idVal = request.getParameter(PARAM_ID, null);
 		if (idVal == null)
-			Window.alert("Empty card id in request parametr");
-		
+			Window.alert("Empty card id in request parameter");
 		try {
-			int cardId = Integer.valueOf(idVal);
+			this.cardId = Integer.valueOf(idVal);
 			this.showCard(cardId);
 		} catch (NumberFormatException exception) {
 			Window.alert("Wrong card id format for \"" + idVal + "\" (id must be an integer)");
@@ -126,10 +139,10 @@ public class CardPresenter extends WidgetPresenter<CardPresenter.Display> {
 		String newName = this.display.getNameField().getValue();
 		String newPhone = this.display.getPhoneField().getValue();
 		
-		if (!CardFieldsVerification.verifyCardFields(newName, newPhone))
-			return;
+		this.editCard(this.cardId, newName, newPhone);
 	}
 
 	private void remove() {
+		this.removeCard(this.cardId);
 	}
 }

@@ -20,10 +20,6 @@ package com.bananamilkshake.client;
 
 import com.bananamilkshake.dispatcher.AddCard;
 import com.bananamilkshake.dispatcher.AddCardResult;
-import com.bananamilkshake.dispatcher.EditCard;
-import com.bananamilkshake.dispatcher.EditCardResult;
-import com.bananamilkshake.dispatcher.RemoveCard;
-import com.bananamilkshake.dispatcher.RemoveCardResult;
 import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,12 +35,9 @@ import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
-import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
-public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Display> {
+public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Display> {
 	private static final Place PLACE = new Place("");
-	
-	private final DispatchAsync dispatchAsync;
 	
 	public interface Display extends WidgetDisplay {
 		public HasClickHandlers getAddButton();
@@ -66,8 +59,27 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 	}
 	
 	public PhoneBookPresenter(Display display, EventBus eventBus, final DispatchAsync dispatchAsync) {
-		super(display, eventBus);
-		this.dispatchAsync = dispatchAsync;
+		super(display, eventBus, dispatchAsync);
+	}
+
+	@Override
+	protected void onEditCardSuccess() {
+		RootPanel.get().add(new HTML("Card successfully edited"));
+	}
+
+	@Override
+	protected void onEditCardFailure(Throwable exception) {
+		RootPanel.get().add(new HTML("Exception on editing card: " +exception.getMessage()));
+	}
+
+	@Override
+	protected void onRemoveCardSuccess() {
+		Window.alert("Card removed");
+	}
+
+	@Override
+	protected void onRemoveCardFailure(Throwable exception) {
+		RootPanel.get().add(new HTML("Exception on removing card: " + exception.getMessage()));
 	}
 	
 	@Override
@@ -173,37 +185,15 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 		String newName = this.display.getEditNameText().getValue();
 		String newPhone = this.display.getEditPhoneText().getValue();
 		
-		if (!CardFieldsVerification.verifyCardFields(newName, newPhone))
-			return;
-		
 		int id = CardFieldsVerification.convertId(idVal);
 		
-		this.dispatchAsync.execute(new EditCard(id, newName, newPhone), new AsyncCallback<EditCardResult>() {
-			@Override
-			public void onFailure(Throwable exception) {
-				RootPanel.get().add(new HTML(exception.getMessage()));
-			}
-
-			@Override
-			public void onSuccess(EditCardResult result) {
-				RootPanel.get().add(new HTML("Card " + result.getCurrent().getId() + " successfully edited"));
-			}
-		});
+		this.editCard(id, newName, newPhone);
 	}
 
 	private void remove() {
 		String idVal = this.display.getRemoveIdText().getValue();
 		int id = CardFieldsVerification.convertId(idVal);
 		
-		this.dispatchAsync.execute(new RemoveCard(id), new AsyncCallback<RemoveCardResult>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-
-			@Override
-			public void onSuccess(RemoveCardResult result) {
-				Window.alert("Card removed");
-			}
-		});
+		this.removeCard(id);
 	}
 }
