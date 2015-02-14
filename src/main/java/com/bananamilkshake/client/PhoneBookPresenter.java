@@ -147,7 +147,7 @@ public class PhoneBookPresenter extends WidgetPresenter<PhoneBookPresenter.Displ
 	private void edit() {
 		String idVal = this.display.getEditIdText().getValue();
 		String newName = this.display.getEditNameText().getValue();
-		String newPhone = this.display.getPhoneText().getValue();
+		String newPhone = this.display.getEditPhoneText().getValue();
 		
 		if (!CardFieldsVerification.verifyCardFields(newName, newPhone))
 			return;
