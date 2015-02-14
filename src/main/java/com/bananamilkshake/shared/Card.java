@@ -19,21 +19,30 @@
 package com.bananamilkshake.shared;
 
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * Card is used to keep name and phone.
  */
+@Entity
 public class Card implements Comparable<Card>, Serializable {
-	private int id;
+	@Id
+	@GeneratedValue
+	protected int id;
 	
-	private String name;	
+	@Column(unique = true)
+	private String name;
+	
+	@Column(unique = true)
 	private String phone;
-	
+
 	public Card() {
 	}
 	
-	public Card(int id, String name, String phone) {
-		this.id = id;
+	public Card(String name, String phone) {
 		this.name = name;
 		this.phone = phone;
 	}

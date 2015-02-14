@@ -18,22 +18,23 @@
 
 package com.bananamilkshake.dispatcher;
 
+import com.bananamilkshake.shared.Card;
 import net.customware.gwt.dispatch.shared.Result;
 
 public class AddCardResult implements Result {
-	private int addedId;
+	private Card addedCard;
 	
 	AddCardResult() {
 	}
 	
-	public AddCardResult(int addedId) {
-		this.addedId = addedId;
+	public AddCardResult(Card addedCard) {
+		this.addedCard = addedCard;
 	}
 
 	/**
-	 * @return the addedId
+	 * @return cad that was added
 	 */
-	public int getAddedId() {
-		return this.addedId;
+	public Card getAddedCard() {
+		return this.addedCard;
 	}
 }

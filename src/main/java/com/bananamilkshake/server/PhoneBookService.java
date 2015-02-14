@@ -18,10 +18,15 @@
 
 package com.bananamilkshake.server;
 
+import com.bananamilkshake.ejb.Phones;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import net.customware.gwt.dispatch.client.standard.StandardDispatchService;
 import net.customware.gwt.dispatch.server.DefaultActionHandlerRegistry;
 import net.customware.gwt.dispatch.server.Dispatch;
@@ -36,17 +41,28 @@ import net.customware.gwt.dispatch.shared.Result;
  */
 public class PhoneBookService extends RemoteServiceServlet implements StandardDispatchService {
 	private static final Logger LOG = Logger.getLogger(PhoneBookService.class.getName());
+
+	private static Phones phones = null;
+	
+	static {
+		try {
+			Context context = new InitialContext();
+			phones = (Phones) context.lookup("java:module/Phones");
+		} catch (NamingException exception) {
+			LOG.log(Level.WARNING, "Error on Phones EJB retrieving", exception);
+		}
+	}
 	
 	private final Dispatch dispatch;
 	
 	public PhoneBookService() {
 		InstanceActionHandlerRegistry registry = new DefaultActionHandlerRegistry();
-		registry.addHandler(new AddCardHandler());
-		registry.addHandler(new EditCardHandler());
-		registry.addHandler(new GetCardHandler());
-		registry.addHandler(new RemoveCardHandler());
-		registry.addHandler(new SearchHandler());
-		registry.addHandler(new ShowAllHandler());
+		registry.addHandler(new AddCardHandler(phones));
+		registry.addHandler(new EditCardHandler(phones));
+		registry.addHandler(new GetCardHandler(phones));
+		registry.addHandler(new RemoveCardHandler(phones));
+		registry.addHandler(new SearchHandler(phones));
+		registry.addHandler(new ShowAllHandler(phones));
 		this.dispatch = new SimpleDispatch(registry);
 		
 		LOG.info("PhoneBookService created");

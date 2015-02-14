@@ -20,12 +20,18 @@ package com.bananamilkshake.server;
 
 import com.bananamilkshake.dispatcher.GetCard;
 import com.bananamilkshake.dispatcher.GetCardResult;
-import com.bananamilkshake.shared.Card;
+import com.bananamilkshake.ejb.Phones;
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class GetCardHandler implements ActionHandler<GetCard, GetCardResult>{
+public class GetCardHandler implements ActionHandler<GetCard, GetCardResult> {
+	private Phones phones;
+	
+	public GetCardHandler(Phones phones) {
+		this.phones = phones;
+	}
+	
 	@Override
 	public Class<GetCard> getActionType() {
 		return GetCard.class;
@@ -33,8 +39,7 @@ public class GetCardHandler implements ActionHandler<GetCard, GetCardResult>{
 
 	@Override
 	public GetCardResult execute(GetCard action, ExecutionContext context) throws DispatchException {
-		Card card = new Card(action.getId(), "card name", "phone");
-		return new GetCardResult(card);
+		return new GetCardResult(this.phones.get(action.getId()));
 	}
 
 	@Override

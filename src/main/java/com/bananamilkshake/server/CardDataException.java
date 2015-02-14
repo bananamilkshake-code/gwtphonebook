@@ -21,6 +21,9 @@ package com.bananamilkshake.server;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 public class CardDataException extends DispatchException {
+	protected CardDataException() {
+	}
+	
 	public CardDataException(String message) {
 		super(message);
 	}

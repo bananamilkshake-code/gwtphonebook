@@ -20,12 +20,15 @@ package com.bananamilkshake.server;
 
 import com.bananamilkshake.dispatcher.EditCard;
 import com.bananamilkshake.dispatcher.EditCardResult;
-import com.bananamilkshake.shared.Card;
+import com.bananamilkshake.ejb.Phones;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {	
-	public EditCardHandler() {
+public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {
+	private Phones phones;
+	
+	public EditCardHandler(Phones phones) {
+		this.phones = phones;
 	}
 	
 	@Override
@@ -45,26 +48,11 @@ public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {
 	public EditCardResult execute(EditCard action, ExecutionContext context) throws DispatchException {
 		this.validateData(action.getNewName(), action.getNewPhone());
 		
-		Card card = new Card(1, "a", "b");
-		
-		synchronized (card) {
-			String oldName = card.getName();
-			String oldPhone = card.getPhone();
-			
-			card.setName(action.getNewName());
-			card.setPhone(action.getNewPhone());
-			
-			return new EditCardResult(oldName, oldPhone, card);
-		}
+		return this.phones.edit(action.getId(), action.getNewName(), action.getNewPhone());
 	}
 
 	@Override
 	public void rollback(EditCard action, EditCardResult result, ExecutionContext context) throws DispatchException {
-		Card card = result.getCurrent();
-		
-		synchronized (card) {
-			card.setName(result.getOldName());
-			card.setPhone(result.getOldPhone());
-		}
+		this.phones.edit(action.getId(), result.getOldName(), result.getOldPhone());
 	}
 }

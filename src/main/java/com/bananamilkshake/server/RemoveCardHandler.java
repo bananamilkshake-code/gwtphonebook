@@ -20,12 +20,18 @@ package com.bananamilkshake.server;
 
 import com.bananamilkshake.dispatcher.RemoveCard;
 import com.bananamilkshake.dispatcher.RemoveCardResult;
-import com.bananamilkshake.shared.Card;
+import com.bananamilkshake.ejb.Phones;
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class RemoveCardHandler implements ActionHandler<RemoveCard, RemoveCardResult>{
+public class RemoveCardHandler implements ActionHandler<RemoveCard, RemoveCardResult> {
+	private Phones phones;
+	
+	public RemoveCardHandler(Phones phones) {
+		this.phones = phones;
+	}
+	
 	@Override
 	public Class<RemoveCard> getActionType() {
 		return RemoveCard.class;
@@ -33,13 +39,12 @@ public class RemoveCardHandler implements ActionHandler<RemoveCard, RemoveCardRe
 
 	@Override
 	public RemoveCardResult execute(RemoveCard action, ExecutionContext context) throws DispatchException {
-		Card toRemove = new Card(action.getToRemove(), "removed_name", "removed_phone");
-		return new RemoveCardResult(toRemove);
+		return new RemoveCardResult(this.phones.remove(action.getToRemove()));
 	}
 
 	@Override
 	public void rollback(RemoveCard action, RemoveCardResult result, ExecutionContext context) throws DispatchException {
-		// Create result.removed back
+		this.phones.restore(result.getRemovedCard());
 	}
 
 }

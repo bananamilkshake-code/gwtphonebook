@@ -20,14 +20,20 @@ package com.bananamilkshake.server;
 
 import com.bananamilkshake.dispatcher.CardsListResult;
 import com.bananamilkshake.dispatcher.Search;
-import com.bananamilkshake.shared.Card;
+import com.bananamilkshake.ejb.Phones;
 import com.bananamilkshake.shared.FieldVerifier;
-import java.util.ArrayList;
+import java.util.regex.Pattern;
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 public class SearchHandler implements ActionHandler<Search, CardsListResult> {
+	private Phones phones;
+	
+	public SearchHandler(Phones phones) {
+		this.phones = phones;
+	}
+	
 	@Override
 	public Class<Search> getActionType() {
 		return Search.class;
@@ -39,11 +45,8 @@ public class SearchHandler implements ActionHandler<Search, CardsListResult> {
 			throw new SearchException(action.getPattern());
 		}
 		
-		ArrayList<Card> cards = new ArrayList<>();
-		cards.add(new Card(1, "searched_card1", "searched_phone1"));
-		cards.add(new Card(2, "searched_card2", "searched_phone2"));
-		cards.add(new Card(3, "searched_card3", "searched_phone3"));
-		return new CardsListResult(cards);
+		Pattern pattern = Pattern.compile(action.getPattern());
+		return new CardsListResult(this.phones.search(pattern));
 	}
 
 	@Override
@@ -51,6 +54,9 @@ public class SearchHandler implements ActionHandler<Search, CardsListResult> {
 	}
 	
 	public class SearchException extends DispatchException {
+		protected SearchException() {
+		}
+		
 		public SearchException(String pattern) {
 			super("Wrong pattern \"" + pattern + "\"");
 		}
