@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Lock;
@@ -45,11 +44,6 @@ public class Phones {
 	private EntityManager entityManager;
 	
 	public Phones() {
-	}
-	
-	@PostConstruct
-	public void postConstruct() {
-		LOG.info("Phones singleton contructed");
 	}
 	
 	/**
