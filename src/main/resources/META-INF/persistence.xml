@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<persistence-unit name="gwtphonebook" transaction-type="JTA">
 		<jta-data-source>java:/datasources/GWTPhoneBook</jta-data-source>
 		<properties>
-			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="false" />
 		</properties>
 	</persistence-unit>
