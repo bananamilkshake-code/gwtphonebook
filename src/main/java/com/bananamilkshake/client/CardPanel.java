@@ -22,15 +22,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class CardPanel extends Composite implements CardPresenter.Display {
 	private final Messages messages = GWT.create(Messages.class);
-
-	private final FlowPanel panel = new FlowPanel();
 	
 	private final TextBox nameField = new TextBox();
 	private final TextBox phoneField = new TextBox();
@@ -39,19 +38,25 @@ public class CardPanel extends Composite implements CardPresenter.Display {
 	private final Button removeButton = new Button();
 	
 	public CardPanel() {
+		
 		Label nameLabel = new Label(messages.nameLabel());
 		Label phoneLabel = new Label(messages.phoneLabel());
 		
 		this.editButton.setText(messages.editButton());
 		this.removeButton.setText(messages.removeButton());
 		
-		initWidget(this.panel);
-		this.panel.add(nameLabel);
-		this.panel.add(this.nameField);
-		this.panel.add(phoneLabel);
-		this.panel.add(this.phoneField);
-		this.panel.add(this.editButton);
-		this.panel.add(this.removeButton);
+		HorizontalPanel buttonsPanel = new HorizontalPanel();
+		buttonsPanel.add(this.editButton);
+		buttonsPanel.add(this.removeButton);
+		
+		VerticalPanel rootPanel = new VerticalPanel();
+		rootPanel.add(nameLabel);
+		rootPanel.add(this.nameField);
+		rootPanel.add(phoneLabel);
+		rootPanel.add(this.phoneField);
+		rootPanel.add(buttonsPanel);
+		
+		initWidget(rootPanel);
 	}
 	
 	@Override
