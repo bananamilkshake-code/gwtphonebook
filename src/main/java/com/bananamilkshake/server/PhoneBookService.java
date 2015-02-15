@@ -23,6 +23,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import net.customware.gwt.dispatch.client.standard.StandardDispatchService;
 import net.customware.gwt.dispatch.server.DefaultActionHandlerRegistry;
@@ -39,12 +40,16 @@ import net.customware.gwt.dispatch.shared.Result;
 public class PhoneBookService extends RemoteServiceServlet implements StandardDispatchService {
 	private static final Logger LOG = Logger.getLogger(PhoneBookService.class.getName());
 	
-	private final Dispatch dispatch;
+	private Dispatch dispatch;
 	
 	@EJB
 	private Phones phones;
 	
 	public PhoneBookService() {
+	}
+	
+	@PostConstruct
+	void initHandlers() {
 		InstanceActionHandlerRegistry registry = new DefaultActionHandlerRegistry();
 		registry.addHandler(new AddCardHandler(phones));
 		registry.addHandler(new EditCardHandler(phones));
@@ -54,7 +59,7 @@ public class PhoneBookService extends RemoteServiceServlet implements StandardDi
 		registry.addHandler(new ShowAllHandler(phones));
 		this.dispatch = new SimpleDispatch(registry);
 		
-		LOG.info("PhoneBookService created");
+		LOG.info("PhoneBookService created");		
 	}
 
 	@Override
