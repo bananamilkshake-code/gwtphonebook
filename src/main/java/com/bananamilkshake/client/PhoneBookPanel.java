@@ -75,6 +75,12 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	}
 
 	@Override
+	public void afterAdd() {
+		this.nameText.setText("");
+		this.phoneText.setText("");
+	}
+
+	@Override
 	public HasValue<String> getNameText() {
 		return this.nameText;
 	}

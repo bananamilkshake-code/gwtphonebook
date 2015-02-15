@@ -45,6 +45,7 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 		public HasClickHandlers getAddButton();
 		public HasValue<String> getNameText();
 		public HasValue<String> getPhoneText();
+		public void afterAdd();
 		
 		public HasClickHandlers getShowAllButton();
 		
@@ -182,6 +183,7 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 			@Override
 			public void onSuccess(AddCardResult result) {
 				PhoneBookPresenter.this.printInfo("Card added. New id is " + result.getAddedCard().getId());
+				PhoneBookPresenter.this.display.afterAdd();
 			}
 		});
 	}
