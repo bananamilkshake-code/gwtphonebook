@@ -20,6 +20,7 @@ package com.bananamilkshake.ejb;
 import com.bananamilkshake.dispatcher.EditCardResult;
 import com.bananamilkshake.shared.Card;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
@@ -28,8 +29,16 @@ import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
@@ -47,16 +56,34 @@ public class Phones {
 		LOG.info("Phones singleton contructed");
 	}
 	
+	/**
+	 * Creating new instance of <code>Card</code> with name and phone.
+	 * 
+	 * @param name
+	 * @param phone
+	 * @return created card
+	 * @throws Exception
+	 */
 	@Lock(LockType.WRITE)
-	public Card add(String name, String phone) {
+	public Card add(String name, String phone) throws Exception {		
 		Card newCard = new Card(name, phone);
-		entityManager.persist(newCard);		
+		this.entityManager.persist(newCard);
 		return newCard;
 	}
 
+	/**
+	 * Set card with id <code>id</code> name as <code>newName</code> and phone
+	 * as <code>newPhone</code>.
+	 * 
+	 * @param id card to edit
+	 * @param newName
+	 * @param newPhone
+	 * @return EditCardResult object, that contains information about editing
+	 * @throws IllegalArgumentException if there is no card with id <code>id</code>
+	 */
 	@Lock(LockType.WRITE)
-	public EditCardResult edit(int id, String newName, String newPhone) {
-		Card card = this.entityManager.find(Card.class, id);
+	public EditCardResult edit(int id, String newName, String newPhone) throws IllegalArgumentException {
+		Card card = this.get(id);
 		
 		EditCardResult result = new EditCardResult(card.getName(), card.getPhone(), card);
 
@@ -67,30 +94,93 @@ public class Phones {
 		return result;
 	}
 
+	/**
+	 * Remove card with specified id.
+	 * @param id card to delete
+	 * @return Card instance that was removed.
+	 */
 	@Lock(LockType.WRITE)
 	public Card remove(int id) {
-		Card card = this.entityManager.find(Card.class, id);
+		Card card = this.get(id);
+		
 		this.entityManager.remove(card);
 		return card;
 	}
 	
+	/**
+	 * Restore removed card.
+	 * @param card 
+	 */
 	@Lock(LockType.READ)
 	public void restore(Card card) {
 		this.entityManager.persist(card);
 	}
 
+	/**
+	 * Retrieving card with id.
+	 * @param id
+	 * @return requested card
+	 */
 	@Lock(LockType.READ)
 	public Card get(int id) {
-		return this.entityManager.find(Card.class, id);
+		Card card = this.entityManager.find(Card.class, id);
+		if (card == null) {
+			throw new IllegalArgumentException("There is no card with id " + id);
+		}
+		return card;
 	}
 	
+	/**
+	 * Selecting all cards existing.
+	 * @return List of cards
+	 */
 	@Lock(LockType.READ)
 	public ArrayList<Card> getAll() {
-		return new ArrayList<>();
+		CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
+		
+		CriteriaQuery<Card> criteriaQuery = criteriaBuilder.createQuery(Card.class);
+		Root<Card> cardRoot = criteriaQuery.from(Card.class);
+		criteriaQuery.select(cardRoot);
+		
+		return this.select(criteriaQuery);
 	}
 
+	/**
+	 * Selecting cards which name matches pattern <code>pattern</code>.
+	 * @param pattern name pattern
+	 * @return List of cards
+	 */
 	@Lock(LockType.READ)
 	public ArrayList<Card> search(Pattern pattern) {
-		return new ArrayList<>();
+		CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Card> criteriaQuery = criteriaBuilder.createQuery(Card.class);
+		
+		EntityType<Card> card_ = this.entityManager.getMetamodel().entity(Card.class);
+		
+		Root<Card> cardRoot = criteriaQuery.from(Card.class);
+		
+		Expression<String> nameParam = cardRoot.get("name");
+		Predicate patternLike = criteriaBuilder.like(nameParam, pattern.toString());
+		
+		//criteriaQuery.select(cardRoot);
+		criteriaQuery.where(patternLike);
+		
+		return this.select(criteriaQuery);
+	}
+	
+	private ArrayList<Card> select(CriteriaQuery<Card> criteria) {
+		List<Card> selected = this.entityManager.createQuery(criteria).getResultList();
+		
+		ArrayList<Card> cards = new ArrayList<>();
+		if (selected == null) {
+			LOG.info("Selected cards are null");
+			return cards;
+		}
+		
+		for (Card card : selected) {
+			cards.add(card);
+		}
+		
+		return cards;
 	}
 }
