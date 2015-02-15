@@ -22,9 +22,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -153,7 +151,7 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	}
 
 	private void createShowAllTab() {
-		FlowPanel panel = new FlowPanel();
+		VerticalPanel panel = new VerticalPanel();
 		
 		Label showAllLabel = new Label(messages.showAllLabel());
 		panel.add(showAllLabel);
@@ -163,7 +161,7 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	}
 
 	private void createSearchTab() {
-		FlowPanel panel = new FlowPanel();
+		VerticalPanel panel = new VerticalPanel();
 		
 		Label searchLabel = new Label(messages.searchLabel());
 		
@@ -175,7 +173,7 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	}
 
 	private void createEditTab() {
-		FlowPanel panel = new FlowPanel();
+		VerticalPanel panel = new VerticalPanel();
 		
 		Label idLabel = new Label(messages.idLabel());
 		Label editNameLabel = new Label(messages.editNameLabel());
@@ -194,7 +192,7 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	}
 
 	private void createRemoveTab() {
-		FlowPanel panel = new FlowPanel();
+		VerticalPanel panel = new VerticalPanel();
 		
 		Label idLabel = new Label(messages.idLabel());
 		
