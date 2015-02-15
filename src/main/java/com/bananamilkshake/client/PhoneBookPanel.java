@@ -24,9 +24,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Display {
 	private final Messages messages = GWT.create(Messages.class);
@@ -135,8 +137,8 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	public void stopProcessing() {
 	}
 	
-	private void createAddTab() {
-		FlowPanel panel = new FlowPanel();
+	private void createAddTab() {		
+		VerticalPanel panel = new VerticalPanel();
 		
 		Label nameLabel = new Label(messages.nameLabel());
 		Label phoneLabel = new Label(messages.phoneLabel());
