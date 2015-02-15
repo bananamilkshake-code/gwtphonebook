@@ -22,15 +22,19 @@ import com.bananamilkshake.dispatcher.ShowAll;
 import com.bananamilkshake.dispatcher.CardsListResult;
 import com.bananamilkshake.dispatcher.Search;
 import com.bananamilkshake.shared.Card;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import java.util.ArrayList;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
+import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display> {
@@ -40,7 +44,8 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 	public static final String PARAM_PATTERN = "pattern";
 	
 	public interface Display extends WidgetDisplay {
-		VerticalPanel getPanel();
+		HasClickHandlers getBackButton();
+		VerticalPanel getCards();
 	}
 	
 	public CardsListPresenter(Display display, EventBus eventBus, final DispatchAsync dispatchAsync) {
@@ -49,6 +54,13 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 	
 	@Override
 	protected void onBind() {
+		this.display.getBackButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				CardsListPresenter.this.eventBus.fireEvent(
+					new PlaceRequestEvent(new PlaceRequest(PhoneBookPresenter.PLACE)));
+			}
+		});
 	}
 
 	@Override
@@ -79,13 +91,8 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 	public void refreshDisplay() {
 	}
 
-	@Override
-	public void revealDisplay() {
-		RootPanel.get().add(this.display.asWidget());
-	}
-
 	private void showCards(ArrayList<Card> cards) {
-		this.display.getPanel().clear();
+		this.display.getCards().clear();
 		
 		for (Card card : cards) {			
 			PlaceRequest linkTo = CardPresenter.PLACE.requestWith(CardPresenter.PARAM_ID, String.valueOf(card.getId()));
@@ -94,7 +101,7 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 			
 			Hyperlink cardLink = new Hyperlink(cardStr, linkTo.toString());
 			
-			this.display.getPanel().add(cardLink);
+			this.display.getCards().add(cardLink);
 		}
 	}
 	

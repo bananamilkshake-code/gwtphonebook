@@ -18,20 +18,39 @@
 
 package com.bananamilkshake.client;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class CardsListPanel extends Composite implements CardsListPresenter.Display {
+	private final Messages messages = GWT.create(Messages.class);
 
-	private final VerticalPanel panel = new VerticalPanel();
+	private final VerticalPanel cards = new VerticalPanel();
+	private final Button backButton = new Button();
 	
 	public CardsListPanel() {
-		initWidget(this.panel);
+		Label label = new Label(messages.cardsListLabel());
+		this.backButton.setText(messages.backButton());
+		
+		VerticalPanel panel = new VerticalPanel();
+		panel.add(this.backButton);
+		panel.add(label);
+		panel.add(this.cards);
+		
+		initWidget(panel);
 	}
 	
 	@Override
-	public VerticalPanel getPanel() {
-		return this.panel;
+	public VerticalPanel getCards() {
+		return this.cards;
+	}
+	
+	@Override
+	public HasClickHandlers getBackButton() {
+		return this.backButton;
 	}
 	
 	@Override
