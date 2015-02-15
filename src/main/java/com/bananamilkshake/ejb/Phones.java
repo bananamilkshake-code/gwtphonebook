@@ -29,7 +29,6 @@ import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -37,8 +36,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
 
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
@@ -155,14 +152,11 @@ public class Phones {
 		CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
 		CriteriaQuery<Card> criteriaQuery = criteriaBuilder.createQuery(Card.class);
 		
-		EntityType<Card> card_ = this.entityManager.getMetamodel().entity(Card.class);
-		
 		Root<Card> cardRoot = criteriaQuery.from(Card.class);
 		
 		Expression<String> nameParam = cardRoot.get("name");
 		Predicate patternLike = criteriaBuilder.like(nameParam, pattern.toString());
 		
-		//criteriaQuery.select(cardRoot);
 		criteriaQuery.where(patternLike);
 		
 		return this.select(criteriaQuery);
