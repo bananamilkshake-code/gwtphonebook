@@ -27,10 +27,14 @@ import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.TabPanel;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
@@ -41,7 +45,11 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Display> {
 	public static final Place PLACE = new Place("");
 	
+	public static final String PARAM_ACTION = "action";
+	
 	public interface Display extends WidgetDisplay {
+		public TabPanel getTabPanel();
+		
 		public HasClickHandlers getAddButton();
 		public HasValue<String> getNameText();
 		public HasValue<String> getPhoneText();
@@ -100,6 +108,13 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 	
 	@Override
 	protected void onBind() {
+		this.display.getTabPanel().addSelectionHandler(new SelectionHandler<Integer>() {
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				PhoneBookPresenter.this.onTabChange(event.getSelectedItem());
+			}
+		});
+		
 		this.display.getAddButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -161,10 +176,28 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 
 	@Override
 	protected void placeRequested(PlaceRequest request) {
+		String action = request.getParameter(PARAM_ACTION, null);
+		if (action == null)
+			return;
+		
+		for (PhoneBookPanel.Tabs tab : PhoneBookPanel.Tabs.values()) {
+			if (!tab.actionName.equals(action))
+				continue;
+			
+			this.display.getTabPanel().selectTab(tab.ordinal());
+			return;
+		}
 	}
 
 	@Override
 	public void refreshDisplay() {
+	}
+
+	private void onTabChange(int selectedId) {
+		PlaceRequest currentPlace = new PlaceRequest(PLACE)
+			.with(PARAM_ACTION, PhoneBookPanel.Tabs.values()[selectedId].actionName);
+		
+		History.newItem(currentPlace.toString());
 	}
 	
 	private void add() {

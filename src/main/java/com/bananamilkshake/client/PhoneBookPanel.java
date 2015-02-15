@@ -51,6 +51,47 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	private final Button removeButton = new Button();
 	private final TextBox removeIdText = new TextBox();
 	
+	public enum Tabs {
+		ADD("add") {
+			@Override
+			public void createTabFor(PhoneBookPanel panel) {
+				panel.createAddTab();
+			}
+		},
+		SHOW_ALL("show_all") {
+			@Override
+			public void createTabFor(PhoneBookPanel panel) {
+				panel.createShowAllTab();
+			}
+		},
+		SEARCH("search") {
+			@Override
+			public void createTabFor(PhoneBookPanel panel) {
+				panel.createSearchTab();
+			}
+		},
+		EDIT("edit") {
+			@Override
+			public void createTabFor(PhoneBookPanel panel) {
+				panel.createEditTab();
+			}
+		},
+		REMOVE("remove") {
+			@Override
+			public void createTabFor(PhoneBookPanel panel) {
+				panel.createRemoveTab();
+			}
+		};
+		
+		public final String actionName;
+		
+		Tabs(String actionName) {
+			this.actionName = actionName;
+		}
+		
+		public abstract void createTabFor(PhoneBookPanel panel);
+	}
+	
 	public PhoneBookPanel() {
 		this.addButton.setText(messages.addButton());
 		this.searchButton.setText(messages.searchButton());
@@ -60,13 +101,17 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 		this.loadButton.setText(messages.loadButton());
 		
 		initWidget(this.tabPanel);
-		this.createAddTab();
-		this.createShowAllTab();
-		this.createSearchTab();
-		this.createEditTab();
-		this.createRemoveTab();
+		
+		for (Tabs tab : Tabs.values()) {
+			tab.createTabFor(this);
+		}
 		
 		this.tabPanel.selectTab(0);
+	}
+
+	@Override
+	public TabPanel getTabPanel() {
+		return this.tabPanel;
 	}
 
 	@Override
