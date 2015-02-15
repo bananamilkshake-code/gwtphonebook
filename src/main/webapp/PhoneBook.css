@@ -17,9 +17,31 @@
  */
 
 h1 {
-	font-size: 1em;
+	font-size: 2em;
 	font-weight: bold;
 	color: #777777;
-	margin: 20px 0px 30px;
+	margin: 20px 20px 15px;
+	text-align: left;
+}
+
+.gwt-Label {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.gwt-TextBox {
+	margin: 5px;
+}
+
+.gwt-TabPanel {
+	margin-left: 20px;	
+}
+
+.gwt-TabBar {
+	margin-left: -11px;
+}
+
+.gwt-TabBarItem {
+	align-content: left;
 	text-align: left;
 }
