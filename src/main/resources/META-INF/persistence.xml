@@ -18,14 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <persistence>
-	<persistence-unit name="gwtphonebook">
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+	<persistence-unit name="gwtphonebook" transaction-type="JTA">
 		<jta-data-source>java:/datasources/GWTPhoneBook</jta-data-source>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 			<property name="hibernate.show_sql" value="false" />
-			<property name="hibernate.transaction.jta.platform"
-				  value="org.hibernate.service.jta.platform.internal.JBossStandAloneJtaPlatform" />
 		</properties>
 	</persistence-unit>
 </persistence>  
