@@ -16,15 +16,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.bananamilkshake.server;
+package com.bananamilkshake.shared;
 
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class CardDataException extends DispatchException {
-	protected CardDataException() {
+public class PhonesDispatchException extends DispatchException {
+	public PhonesDispatchException() {
 	}
-	
-	public CardDataException(String message) {
+
+	public PhonesDispatchException(Throwable cause) {
+		super(cause);
+	}
+
+	public PhonesDispatchException(String message) {
 		super(message);
 	}
 }

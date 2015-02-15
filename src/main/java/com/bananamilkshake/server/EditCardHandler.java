@@ -21,6 +21,7 @@ package com.bananamilkshake.server;
 import com.bananamilkshake.dispatcher.EditCard;
 import com.bananamilkshake.dispatcher.EditCardResult;
 import com.bananamilkshake.ejb.Phones;
+import com.bananamilkshake.shared.PhonesDispatchException;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
@@ -48,7 +49,11 @@ public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {
 	public EditCardResult execute(EditCard action, ExecutionContext context) throws DispatchException {
 		this.validateData(action.getNewName(), action.getNewPhone());
 		
-		return this.phones.edit(action.getId(), action.getNewName(), action.getNewPhone());
+		try {
+			return this.phones.edit(action.getId(), action.getNewName(), action.getNewPhone());
+		} catch (Exception exception) {
+			throw new PhonesDispatchException(exception);
+		}
 	}
 
 	@Override

@@ -21,11 +21,12 @@ package com.bananamilkshake.server;
 import com.bananamilkshake.dispatcher.AddCard;
 import com.bananamilkshake.dispatcher.AddCardResult;
 import com.bananamilkshake.ejb.Phones;
+import com.bananamilkshake.shared.PhonesDispatchException;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 public class AddCardHandler extends CardDataHandler<AddCard, AddCardResult> {
-	private Phones phones;
+	private final Phones phones;
 	
 	public AddCardHandler(Phones phones) {
 		this.phones = phones;
@@ -40,24 +41,15 @@ public class AddCardHandler extends CardDataHandler<AddCard, AddCardResult> {
 	public AddCardResult execute(AddCard action, ExecutionContext context) throws DispatchException {
 		this.validateData(action.getName(), action.getPhone());
 		
-		return new AddCardResult(phones.add(action.getName(), action.getPhone()));
+		try {
+			return new AddCardResult(this.phones.add(action.getName(), action.getPhone()));
+		} catch (Exception exception) {
+			throw new PhonesDispatchException(exception);
+		}
 	}
 
 	@Override
 	public void rollback(AddCard action, AddCardResult result, ExecutionContext context) throws DispatchException {
 		this.phones.remove(result.getAddedCard().getId());
-	}
-	
-	public class AddCardException extends DispatchException {
-		protected AddCardException() {
-		}
-		
-		public AddCardException(Throwable cause) {
-			super(cause);
-		}
-		
-		public AddCardException(String message) {
-			super(message);
-		}
 	}
 }

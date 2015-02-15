@@ -18,19 +18,20 @@
 
 package com.bananamilkshake.server;
 
+import com.bananamilkshake.shared.PhonesDispatchException;
 import com.bananamilkshake.shared.FieldVerifier;
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.shared.Action;
 import net.customware.gwt.dispatch.shared.Result;
 
 public abstract class CardDataHandler<A extends Action<R>, R extends Result> implements ActionHandler<A, R> {
-	protected void validateData(String name, String phone) throws CardDataException {
+	protected void validateData(String name, String phone) throws PhonesDispatchException {
 		if (!FieldVerifier.isValidName(name)) {
-			throw new CardDataException("Name \"" + name + "\" is invalid");
+			throw new PhonesDispatchException("Name \"" + name + "\" is invalid");
 		}
 		
 		if (!FieldVerifier.isValidPhone(phone)) {
-			throw new CardDataException("Phone \"" + phone+ "\" is invalid");
+			throw new PhonesDispatchException("Phone \"" + phone+ "\" is invalid");
 		}
 	}
 }

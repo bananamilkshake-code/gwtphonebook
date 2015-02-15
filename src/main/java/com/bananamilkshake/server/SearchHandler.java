@@ -21,6 +21,7 @@ package com.bananamilkshake.server;
 import com.bananamilkshake.dispatcher.CardsListResult;
 import com.bananamilkshake.dispatcher.Search;
 import com.bananamilkshake.ejb.Phones;
+import com.bananamilkshake.shared.PhonesDispatchException;
 import com.bananamilkshake.shared.FieldVerifier;
 import java.util.regex.Pattern;
 import net.customware.gwt.dispatch.server.ActionHandler;
@@ -28,7 +29,7 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 public class SearchHandler implements ActionHandler<Search, CardsListResult> {
-	private Phones phones;
+	private final Phones phones;
 	
 	public SearchHandler(Phones phones) {
 		this.phones = phones;
@@ -42,7 +43,7 @@ public class SearchHandler implements ActionHandler<Search, CardsListResult> {
 	@Override
 	public CardsListResult execute(Search action, ExecutionContext context) throws DispatchException {
 		if (!FieldVerifier.isValidSearchPattern(action.getPattern())) {
-			throw new SearchException(action.getPattern());
+			throw new PhonesDispatchException("Invalid pattern \"" + action.getPattern() + "\"");
 		}
 		
 		Pattern pattern = Pattern.compile(action.getPattern());
@@ -51,14 +52,5 @@ public class SearchHandler implements ActionHandler<Search, CardsListResult> {
 
 	@Override
 	public void rollback(Search action, CardsListResult result, ExecutionContext context) throws DispatchException {
-	}
-	
-	public class SearchException extends DispatchException {
-		protected SearchException() {
-		}
-		
-		public SearchException(String pattern) {
-			super("Wrong pattern \"" + pattern + "\"");
-		}
 	}
 }
