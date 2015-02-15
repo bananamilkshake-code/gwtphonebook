@@ -53,10 +53,9 @@ public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {
 		try {
 			Card toEdit = this.phones.get(action.getId());
 			
-			String oldName = toEdit.getName();
-			String oldPhone = toEdit.getPhone();
-			
 			synchronized (toEdit) {
+				String oldName = toEdit.getName();
+				String oldPhone = toEdit.getPhone();
 				if (!toEdit.getName().equals(action.getEditingName()) || !toEdit.getPhone().equals(action.getEditingPhone())) {
 					throw new PhonesDispatchException("Old data card was tried to be edited");
 				}
@@ -65,9 +64,9 @@ public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {
 				toEdit.setPhone(action.getNewPhone());
 				
 				this.phones.edit(toEdit);
+				
+				return new EditCardResult(oldName, oldPhone, toEdit.getId(), action.getNewName(), action.getNewPhone());
 			}
-			
-			return new EditCardResult(oldName, oldPhone, toEdit.getId(), action.getNewName(), action.getNewPhone());
 		} catch (Exception exception) {
 			throw new PhonesDispatchException(exception);
 		}
