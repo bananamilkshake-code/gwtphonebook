@@ -17,7 +17,6 @@
  */
 package com.bananamilkshake.ejb;
 
-import com.bananamilkshake.dispatcher.EditCardResult;
 import com.bananamilkshake.shared.Card;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,26 +68,14 @@ public class Phones {
 	}
 
 	/**
-	 * Set card with id <code>id</code> name as <code>newName</code> and phone
-	 * as <code>newPhone</code>.
+	 * Updates card.
 	 * 
-	 * @param id card to edit
-	 * @param newName
-	 * @param newPhone
-	 * @return EditCardResult object, that contains information about editing
-	 * @throws IllegalArgumentException if there is no card with id <code>id</code>
+	 * @param card to update
+	 * @throws java.lang.Exception
 	 */
 	@Lock(LockType.WRITE)
-	public EditCardResult edit(int id, String newName, String newPhone) throws IllegalArgumentException {
-		Card card = this.get(id);
-		
-		EditCardResult result = new EditCardResult(card.getName(), card.getPhone(), card);
-
-		card.setName(newName);
-		card.setPhone(newPhone);
+	public void edit(Card card) throws Exception {
 		this.entityManager.merge(card);
-		
-		return result;
 	}
 
 	/**

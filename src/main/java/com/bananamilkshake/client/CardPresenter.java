@@ -39,7 +39,7 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 	public static final String PARAM_ID = "id";
 	
 	private int cardId;
-	
+
 	public interface Display extends WidgetDisplay{
 		HasValue<String> getNameField();
 		HasValue<String> getPhoneField();
@@ -67,6 +67,14 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 
 	@Override
 	protected void onRemoveCardFailure(Throwable exception) {
+	}
+	
+	@Override
+	protected void onCardLoaded(Card card) {
+		this.updateCurrentCardValues(card.getName(), card.getPhone());
+
+		this.display.getNameField().setValue(card.getName());
+		this.display.getPhoneField().setValue(card.getPhone());
 	}
 
 	@Override
@@ -121,10 +129,7 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 
 			@Override
 			public void onSuccess(GetCardResult result) {
-				Card card = result.getCard();
-				
-				CardPresenter.this.display.getNameField().setValue(card.getName());
-				CardPresenter.this.display.getPhoneField().setValue(card.getPhone());
+				CardPresenter.this.onCardLoaded(result.getCard());
 			}	
 		});
 	}

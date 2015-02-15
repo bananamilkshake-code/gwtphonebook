@@ -21,6 +21,7 @@ package com.bananamilkshake.server;
 import com.bananamilkshake.dispatcher.EditCard;
 import com.bananamilkshake.dispatcher.EditCardResult;
 import com.bananamilkshake.ejb.Phones;
+import com.bananamilkshake.shared.Card;
 import com.bananamilkshake.shared.PhonesDispatchException;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
@@ -50,7 +51,23 @@ public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {
 		this.validateData(action.getNewName(), action.getNewPhone());
 		
 		try {
-			return this.phones.edit(action.getId(), action.getNewName(), action.getNewPhone());
+			Card toEdit = this.phones.get(action.getId());
+			
+			String oldName = toEdit.getName();
+			String oldPhone = toEdit.getPhone();
+			
+			synchronized (toEdit) {
+				if (!toEdit.getName().equals(action.getEditingName()) || !toEdit.getPhone().equals(action.getEditingPhone())) {
+					throw new PhonesDispatchException("Old data card was tried to be edited");
+				}
+				
+				toEdit.setName(action.getNewName());
+				toEdit.setPhone(action.getNewPhone());
+				
+				this.phones.edit(toEdit);
+			}
+			
+			return new EditCardResult(oldName, oldPhone, toEdit.getId(), action.getNewName(), action.getNewPhone());
 		} catch (Exception exception) {
 			throw new PhonesDispatchException(exception);
 		}
@@ -58,6 +75,21 @@ public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {
 
 	@Override
 	public void rollback(EditCard action, EditCardResult result, ExecutionContext context) throws DispatchException {
-		this.phones.edit(action.getId(), result.getOldName(), result.getOldPhone());
+		try {
+			Card edited = this.phones.get(result.getId());
+			
+			synchronized (edited) {
+				if (!edited.getName().equals(result.getSetName()) || !edited.getPhone().equals(result.getSetPhone())) {
+					throw new PhonesDispatchException("Tried to rollback other changes");
+				}
+				
+				edited.setName(result.getOldName());
+				edited.setPhone(result.getOldPhone());
+				
+				this.phones.edit(edited);
+			}
+		} catch (Exception exception) {
+			throw new PhonesDispatchException(exception);
+		}
 	}
 }

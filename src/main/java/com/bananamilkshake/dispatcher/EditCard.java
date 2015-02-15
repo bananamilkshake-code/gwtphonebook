@@ -22,27 +22,58 @@ import net.customware.gwt.dispatch.shared.Action;
 
 public class EditCard implements Action<EditCardResult> {
 	private int id;
+	
+	private String editingName;
+	private String editingPhone;
+	
 	private String newName;
 	private String newPhone;
 
 	EditCard() {
 	}
 	
-	public EditCard(int id, String newName, String newPhone) {
+	public EditCard(int id, String editingName, String editingPhone, String newName, String newPhone) {
 		this.id = id;
+		
+		this.editingName = editingName;
+		this.editingPhone = editingPhone;
+		
 		this.newName = newName;
 		this.newPhone = newPhone;
 	}
 
+	/**
+	 * @return Id of <code>Card</code> that is being tried to change.
+	 */
 	public int getId() {
 		return this.id;
 	}
 	
+	/**
+	 * @return Name that client tries to set.
+	 */
 	public String getNewName() {
 		return this.newName;
 	}
 	
+	/**
+	 * @return Phone that client tries to set.
+	 */
 	public String getNewPhone() {
 		return this.newPhone;
+	}
+
+	/** 
+	 * @return Name that client was tried to change.
+	 */
+	public String getEditingName() {
+		return editingName;
+	}
+
+	/**
+	 * @return Phone that client was tried to change.
+	 */
+	public String getEditingPhone() {
+		return editingPhone;
 	}
 }

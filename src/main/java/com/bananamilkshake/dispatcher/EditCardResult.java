@@ -18,34 +18,62 @@
 
 package com.bananamilkshake.dispatcher;
 
-import com.bananamilkshake.shared.Card;
 import net.customware.gwt.dispatch.shared.Result;
 
 public class EditCardResult implements Result {
 	private String oldName;
 	private String oldPhone;
 	
-	private Card current;
+	private int cardId;
+	
+	private String setName;
+	private String setPhone;
 	
 	public EditCardResult() {
 	}
 	
-	public EditCardResult(String oldName, String oldPhone, Card current) {
+	public EditCardResult(String oldName, String oldPhone, int cardId, String setName, String setPhone) {
 		this.oldName = oldName;
 		this.oldPhone = oldPhone;
 		
-		this.current = current;
+		this.cardId = cardId;
+		
+		this.setName = setName;
+		this.setPhone = setPhone;
 	}
 	
+	/**
+	 * @return Name value that was been changed.
+	 */
 	public String getOldName() {
 		return this.oldName;
 	}
 	
+	/**
+	 * @return Phone value that was been changed
+	 */
 	public String getOldPhone() {
 		return this.oldPhone;
 	}
 	
-	public Card getCurrent() {
-		return this.current;
+	/** 
+	 * @return Set card id
+	 */
+	public int getId() {
+		return this.cardId;
+	}
+	
+	/**
+	 * @return Name value that was set instead of old value
+	 */
+	public String getSetName() {
+		return this.setName;
+	}
+	
+	/**
+	 * @return Phone value that was set instead of old value
+	 */
+	public String getSetPhone() {
+		return this.setPhone;
 	}
 }

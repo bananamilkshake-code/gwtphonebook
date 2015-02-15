@@ -20,10 +20,15 @@ package com.bananamilkshake.client;
 
 import com.bananamilkshake.dispatcher.AddCard;
 import com.bananamilkshake.dispatcher.AddCardResult;
+import com.bananamilkshake.dispatcher.GetCard;
+import com.bananamilkshake.dispatcher.GetCardResult;
+import com.bananamilkshake.shared.Card;
 import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasValue;
 import net.customware.gwt.dispatch.client.DispatchAsync;
@@ -47,9 +52,12 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 		public HasValue<String> getSearchPatternText();
 		
 		public HasClickHandlers getEditButton();
+		public HasClickHandlers getLoadButton();
 		public HasValue<String> getEditIdText();
 		public HasValue<String> getEditNameText();
 		public HasValue<String> getEditPhoneText();
+		public void prepareEdit();
+		public void blockEdit();
 		
 		public HasClickHandlers getRemoveButton();
 		public HasValue<String> getRemoveIdText();
@@ -78,6 +86,16 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 	protected void onRemoveCardFailure(Throwable exception) {
 		this.printInfo("Exception on removing card: " + exception.getMessage());
 	}
+
+	@Override
+	protected void onCardLoaded(Card card) {
+		this.updateCurrentCardValues(card.getName(), card.getPhone());
+
+		this.display.getEditNameText().setValue(this.currentCardName);
+		this.display.getEditPhoneText().setValue(this.currentCardPhone);
+
+		this.display.prepareEdit();
+	}
 	
 	@Override
 	protected void onBind() {
@@ -99,6 +117,20 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 			@Override
 			public void onClick(ClickEvent event) {
 				PhoneBookPresenter.this.showAll();
+			}
+		});
+		
+		this.display.getLoadButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				PhoneBookPresenter.this.loadToEdit();
+			}
+		});
+		
+		this.display.getEditIdText().addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				PhoneBookPresenter.this.display.blockEdit();
 			}
 		});
 		
@@ -171,6 +203,24 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 				.with(CardsListPresenter.PARAM_ALL, "true")));
 	}
 
+	private void loadToEdit() {
+		String idVal = this.display.getEditIdText().getValue();
+		
+		final int id = this.convertId(idVal);
+		
+		this.dispatchAsync.execute(new GetCard(id), new AsyncCallback<GetCardResult>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				PhoneBookPresenter.this.printInfo("No card with id " + id);
+			}
+			
+			@Override
+			public void onSuccess(GetCardResult result) {				
+				PhoneBookPresenter.this.onCardLoaded(result.getCard());
+			}
+		});
+	}
+
 	private void edit() {
 		String idVal = this.display.getEditIdText().getValue();
 		String newName = this.display.getEditNameText().getValue();
@@ -179,6 +229,8 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 		int id = this.convertId(idVal);
 		
 		this.editCard(id, newName, newPhone);
+		
+		this.display.blockEdit();
 	}
 
 	private void remove() {

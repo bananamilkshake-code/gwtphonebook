@@ -43,6 +43,7 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	private final Button showAllButton = new Button();
 	
 	private final Button editButton = new Button();
+	private final Button loadButton = new Button();
 	private final TextBox editIdText = new TextBox();
 	private final TextBox editNameText = new TextBox();
 	private final TextBox editPhoneText = new TextBox();
@@ -56,6 +57,7 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 		this.showAllButton.setText(messages.showAllButton());
 		this.editButton.setText(messages.editButton());
 		this.removeButton.setText(messages.removeButton());
+		this.loadButton.setText(messages.loadButton());
 		
 		initWidget(this.tabPanel);
 		this.createAddTab();
@@ -108,6 +110,11 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	}
 
 	@Override
+	public HasClickHandlers getLoadButton() {
+		return this.loadButton;
+	}
+
+	@Override
 	public HasClickHandlers getRemoveButton() {
 		return this.removeButton;
 	}
@@ -125,6 +132,23 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 	@Override
 	public HasValue<String> getEditPhoneText() {
 		return this.editPhoneText;
+	}
+
+	@Override
+	public void prepareEdit() {
+		this.editButton.setEnabled(true);
+		this.editNameText.setEnabled(true);
+		this.editPhoneText.setEnabled(true);
+	}
+
+	@Override
+	public void blockEdit() {
+		this.editNameText.setText("");
+		this.editPhoneText.setText("");
+		
+		this.editButton.setEnabled(false);
+		this.editNameText.setEnabled(false);
+		this.editPhoneText.setEnabled(false);
 	}
 	
 	@Override
@@ -181,6 +205,7 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 		
 		panel.add(idLabel);
 		panel.add(this.editIdText);
+		panel.add(this.loadButton);
 		panel.add(editNameLabel);
 		panel.add(this.editNameText);
 		panel.add(editPhoneLabel);
@@ -189,6 +214,8 @@ public class PhoneBookPanel extends Composite implements PhoneBookPresenter.Disp
 		panel.add(this.editButton);
 		
 		this.tabPanel.add(panel, messages.editTabLabel());
+		
+		this.blockEdit();
 	}
 
 	private void createRemoveTab() {

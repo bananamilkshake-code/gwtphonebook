@@ -22,6 +22,7 @@ import com.bananamilkshake.dispatcher.EditCard;
 import com.bananamilkshake.dispatcher.EditCardResult;
 import com.bananamilkshake.dispatcher.RemoveCard;
 import com.bananamilkshake.dispatcher.RemoveCardResult;
+import com.bananamilkshake.shared.Card;
 import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import net.customware.gwt.dispatch.client.DispatchAsync;
@@ -29,6 +30,8 @@ import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 public abstract class CardEditPresenter <D extends WidgetDisplay> extends BasePresenter<D> {
+	protected String currentCardName;
+	protected String currentCardPhone;
 	
 	public CardEditPresenter(D display, EventBus eventBus, DispatchAsync dispatchAsync) {
 		super(display, eventBus, dispatchAsync);
@@ -42,11 +45,18 @@ public abstract class CardEditPresenter <D extends WidgetDisplay> extends BasePr
 	
 	protected abstract void onRemoveCardFailure(Throwable exception);
 	
+	protected abstract void onCardLoaded(Card card);
+	
+	protected void updateCurrentCardValues(String name, String phone) {
+		this.currentCardName = name;
+		this.currentCardPhone = phone;
+	}
+	
 	protected void editCard(int id, String newName, String newPhone) {
 		if (!this.verifyCardFields(newName, newPhone))
 			return;
 		
-		this.dispatchAsync.execute(new EditCard(id, newName, newPhone), new AsyncCallback<EditCardResult>() {
+		this.dispatchAsync.execute(new EditCard(id, this.currentCardName, this.currentCardPhone, newName, newPhone), new AsyncCallback<EditCardResult>() {
 			@Override
 			public void onFailure(Throwable exception) {
 				CardEditPresenter.this.onEditCardFailure(exception);
