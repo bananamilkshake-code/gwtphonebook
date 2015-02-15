@@ -29,6 +29,7 @@ public class EditCard implements Action<EditCardResult> {
 	}
 	
 	public EditCard(int id, String newName, String newPhone) {
+		this.id = id;
 		this.newName = newName;
 		this.newPhone = newPhone;
 	}
