@@ -104,7 +104,7 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 	}
 
 	@Override
-	protected void onPlaceRequest(PlaceRequest request) {		
+	protected void placeRequested(PlaceRequest request) {		
 		String idVal = request.getParameter(PARAM_ID, null);
 		if (idVal == null)
 			CardPresenter.this.printInfo("Empty card id in request parameter");
@@ -130,7 +130,7 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 			@Override
 			public void onSuccess(GetCardResult result) {
 				CardPresenter.this.onCardLoaded(result.getCard());
-			}	
+			}
 		});
 	}
 

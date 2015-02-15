@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 	}
 
 	@Override
-	protected void onPlaceRequest(PlaceRequest request) {
+	protected void placeRequested(PlaceRequest request) {
 		String paramAllValue = request.getParameter(PARAM_ALL, Boolean.toString(true));
 		if (Boolean.valueOf(paramAllValue)) {
 			this.dispatchAsync.execute(new ShowAll(), new CardsListAsyncCallback());

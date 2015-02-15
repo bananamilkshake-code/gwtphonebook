@@ -160,7 +160,7 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 	}
 
 	@Override
-	protected void onPlaceRequest(PlaceRequest request) {
+	protected void placeRequested(PlaceRequest request) {
 	}
 
 	@Override
