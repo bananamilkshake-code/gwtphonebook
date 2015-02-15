@@ -22,7 +22,6 @@ import com.bananamilkshake.dispatcher.ShowAll;
 import com.bananamilkshake.dispatcher.CardsListResult;
 import com.bananamilkshake.dispatcher.Search;
 import com.bananamilkshake.shared.Card;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -33,12 +32,9 @@ import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
-import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
-public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Display> {
+public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display> {
 	public static final Place PLACE = new Place("list");
-	
-	private final DispatchAsync dispatchAsync;
 	
 	public static final String PARAM_ALL = "all";
 	public static final String PARAM_PATTERN = "pattern";
@@ -48,8 +44,7 @@ public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Displ
 	}
 	
 	public CardsListPresenter(Display display, EventBus eventBus, final DispatchAsync dispatchAsync) {
-		super(display, eventBus);
-		this.dispatchAsync = dispatchAsync;
+		super(display, eventBus, dispatchAsync);
 	}
 	
 	@Override
@@ -75,7 +70,7 @@ public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Displ
 			try {
 				this.dispatchAsync.execute(new Search(pattern), new CardsListAsyncCallback());
 			} catch (RuntimeException exception) {
-				Window.alert("Wrong pattern to search");
+				this.printInfo("Wrong pattern to search");
 			}
 		}
 	}
@@ -106,7 +101,7 @@ public class CardsListPresenter extends WidgetPresenter<CardsListPresenter.Displ
 	private class CardsListAsyncCallback implements AsyncCallback<CardsListResult> {
 		@Override
 		public void onFailure(Throwable exception) {
-			Window.alert("Exception " + exception.getClass() + " on cards request: " + exception.getMessage());
+			CardsListPresenter.this.printInfo("Exception " + exception.getClass() + " on cards request: " + exception.getMessage());
 		}
 
 		@Override

@@ -24,14 +24,13 @@ import com.bananamilkshake.shared.Card;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.RootPanel;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
+import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {	
@@ -63,6 +62,7 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 
 	@Override
 	protected void onRemoveCardSuccess() {
+		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(PhoneBookPresenter.PLACE)));
 	}
 
 	@Override
@@ -99,12 +99,12 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 	protected void onPlaceRequest(PlaceRequest request) {		
 		String idVal = request.getParameter(PARAM_ID, null);
 		if (idVal == null)
-			Window.alert("Empty card id in request parameter");
+			CardPresenter.this.printInfo("Empty card id in request parameter");
 		try {
 			this.cardId = Integer.valueOf(idVal);
 			this.showCard(cardId);
 		} catch (NumberFormatException exception) {
-			Window.alert("Wrong card id format for \"" + idVal + "\" (id must be an integer)");
+			CardPresenter.this.printInfo("Wrong card id format for \"" + idVal + "\" (id must be an integer)");
 		}
 	}
 
@@ -112,17 +112,11 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 	public void refreshDisplay() {
 	}
 
-	@Override
-	public void revealDisplay() {
-		RootPanel.get().clear();
-		RootPanel.get().add(this.display.asWidget());
-	}
-
 	private void showCard(int cardId) {
 		this.dispatchAsync.execute(new GetCard(cardId), new AsyncCallback<GetCardResult>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("There is no card with id");
+				CardPresenter.this.printInfo("There is no card with id");
 			}
 
 			@Override

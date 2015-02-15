@@ -24,11 +24,8 @@ import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.RootPanel;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
@@ -37,7 +34,7 @@ import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Display> {
-	private static final Place PLACE = new Place("");
+	public static final Place PLACE = new Place("");
 	
 	public interface Display extends WidgetDisplay {
 		public HasClickHandlers getAddButton();
@@ -64,22 +61,22 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 
 	@Override
 	protected void onEditCardSuccess() {
-		RootPanel.get().add(new HTML("Card successfully edited"));
+		this.printInfo("Card successfully edited");
 	}
 
 	@Override
 	protected void onEditCardFailure(Throwable exception) {
-		RootPanel.get().add(new HTML("Exception on editing card: " +exception.getMessage()));
+		this.printInfo("Exception on editing card: " + exception.getMessage());
 	}
 
 	@Override
 	protected void onRemoveCardSuccess() {
-		Window.alert("Card removed");
+		this.printInfo("Card removed");
 	}
 
 	@Override
 	protected void onRemoveCardFailure(Throwable exception) {
-		RootPanel.get().add(new HTML("Exception on removing card: " + exception.getMessage()));
+		this.printInfo("Exception on removing card: " + exception.getMessage());
 	}
 	
 	@Override
@@ -136,12 +133,6 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 	@Override
 	public void refreshDisplay() {
 	}
-
-	@Override
-	public void revealDisplay() {
-		RootPanel.get().clear();
-		RootPanel.get().add(this.display.asWidget());
-	}
 	
 	private void add() {
 		String name = display.getNameText().getValue();
@@ -153,12 +144,12 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 		this.dispatchAsync.execute(new AddCard(name, phone), new AsyncCallback<AddCardResult>() {
 			@Override
 			public void onFailure(Throwable exception) {
-				Window.alert("Error on adding card: " + exception.getMessage());
+				PhoneBookPresenter.this.printInfo("Error on adding card: " + exception.getMessage());
 			}
 
 			@Override
 			public void onSuccess(AddCardResult result) {
-				Window.alert("Card added. New id is " + result.getAddedCard().getId());
+				PhoneBookPresenter.this.printInfo("Card added. New id is " + result.getAddedCard().getId());
 			}
 		});
 	}
@@ -166,7 +157,7 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 	private void search() {
 		String toSearch = display.getSearchPatternText().getValue();
 		if (!FieldVerifier.isValidSearchPattern(toSearch)) {
-			Window.alert("Invalid search pattern. Must be a regular expression.");
+			PhoneBookPresenter.this.printInfo("Invalid search pattern. Must be a regular expression.");
 			return;
 		}
 		

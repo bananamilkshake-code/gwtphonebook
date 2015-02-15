@@ -26,14 +26,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
-import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
-public abstract class CardEditPresenter <D extends WidgetDisplay> extends WidgetPresenter<D> {
-	protected final DispatchAsync dispatchAsync;
+public abstract class CardEditPresenter <D extends WidgetDisplay> extends BasePresenter<D> {
 	
 	public CardEditPresenter(D display, EventBus eventBus, DispatchAsync dispatchAsync) {
-		super(display, eventBus);
-		this.dispatchAsync = dispatchAsync;
+		super(display, eventBus, dispatchAsync);
 	}
 	
 	protected abstract void onEditCardSuccess();
