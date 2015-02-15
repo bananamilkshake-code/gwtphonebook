@@ -22,6 +22,7 @@ import com.bananamilkshake.dispatcher.EditCard;
 import com.bananamilkshake.dispatcher.EditCardResult;
 import com.bananamilkshake.dispatcher.RemoveCard;
 import com.bananamilkshake.dispatcher.RemoveCardResult;
+import com.bananamilkshake.shared.FieldVerifier;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
@@ -42,7 +43,7 @@ public abstract class CardEditPresenter <D extends WidgetDisplay> extends BasePr
 	protected abstract void onRemoveCardFailure(Throwable exception);
 	
 	protected void editCard(int id, String newName, String newPhone) {
-		if (!CardFieldsVerification.verifyCardFields(newName, newPhone))
+		if (!this.verifyCardFields(newName, newPhone))
 			return;
 		
 		this.dispatchAsync.execute(new EditCard(id, newName, newPhone), new AsyncCallback<EditCardResult>() {
@@ -70,5 +71,36 @@ public abstract class CardEditPresenter <D extends WidgetDisplay> extends BasePr
 				CardEditPresenter.this.onRemoveCardSuccess();
 			}
 		});
+	}
+	
+	/**
+	 * Checks that name and phone are valid.
+	 * 
+	 * If name or phone are invalid shows Window.alert with message.
+	 * 
+	 * @param name name to check
+	 * @param phone phone to check
+	 * @return true if all fields are valid
+	 */
+	public boolean verifyCardFields(String name, String phone) {
+		if (!FieldVerifier.isValidName(name)) {
+			this.printInfo("Name " + name + " is invalid (must not be empty)");
+			return false;
+		}
+		
+		if (!FieldVerifier.isValidPhone(phone)) {
+			this.printInfo("Phone " + phone + " is invalid. It must be 11 digits without any other characters");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public int convertId(String idVal) {
+		if (idVal == null || idVal.isEmpty()) {
+			this.printInfo("Id is empty");
+		}
+		
+		return Integer.valueOf(idVal);
 	}
 }

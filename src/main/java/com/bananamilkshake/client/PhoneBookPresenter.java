@@ -138,7 +138,7 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 		String name = display.getNameText().getValue();
 		String phone = display.getPhoneText().getValue();
 		
-		if (!CardFieldsVerification.verifyCardFields(name, phone))
+		if (!this.verifyCardFields(name, phone))
 			return;
 		
 		this.dispatchAsync.execute(new AddCard(name, phone), new AsyncCallback<AddCardResult>() {
@@ -176,14 +176,14 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 		String newName = this.display.getEditNameText().getValue();
 		String newPhone = this.display.getEditPhoneText().getValue();
 		
-		int id = CardFieldsVerification.convertId(idVal);
+		int id = this.convertId(idVal);
 		
 		this.editCard(id, newName, newPhone);
 	}
 
 	private void remove() {
 		String idVal = this.display.getRemoveIdText().getValue();
-		int id = CardFieldsVerification.convertId(idVal);
+		int id = this.convertId(idVal);
 		
 		this.removeCard(id);
 	}
