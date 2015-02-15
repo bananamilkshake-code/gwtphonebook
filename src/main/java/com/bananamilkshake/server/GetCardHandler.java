@@ -21,15 +21,12 @@ package com.bananamilkshake.server;
 import com.bananamilkshake.dispatcher.GetCard;
 import com.bananamilkshake.dispatcher.GetCardResult;
 import com.bananamilkshake.ejb.Phones;
-import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class GetCardHandler implements ActionHandler<GetCard, GetCardResult> {
-	private final Phones phones;
-	
+public class GetCardHandler extends PhonesActionHandler<GetCard, GetCardResult> {
 	public GetCardHandler(Phones phones) {
-		this.phones = phones;
+		super(phones);
 	}
 	
 	@Override

@@ -24,15 +24,12 @@ import com.bananamilkshake.ejb.Phones;
 import com.bananamilkshake.shared.PhonesDispatchException;
 import com.bananamilkshake.shared.FieldVerifier;
 import java.util.regex.Pattern;
-import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class SearchHandler implements ActionHandler<Search, CardsListResult> {
-	private final Phones phones;
-	
+public class SearchHandler extends PhonesActionHandler<Search, CardsListResult> {
 	public SearchHandler(Phones phones) {
-		this.phones = phones;
+		super(phones);
 	}
 	
 	@Override

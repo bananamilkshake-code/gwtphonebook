@@ -15,23 +15,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.bananamilkshake.server;
 
-import com.bananamilkshake.shared.PhonesDispatchException;
-import com.bananamilkshake.shared.FieldVerifier;
+import com.bananamilkshake.ejb.Phones;
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.shared.Action;
 import net.customware.gwt.dispatch.shared.Result;
 
-public abstract class CardDataHandler<A extends Action<R>, R extends Result> implements ActionHandler<A, R> {
-	protected void validateData(String name, String phone) throws PhonesDispatchException {
-		if (!FieldVerifier.isValidName(name)) {
-			throw new PhonesDispatchException("Name \"" + name + "\" is invalid");
-		}
-		
-		if (!FieldVerifier.isValidPhone(phone)) {
-			throw new PhonesDispatchException("Phone \"" + phone+ "\" is invalid");
-		}
+public abstract class PhonesActionHandler<A extends Action<R>, R extends Result> implements ActionHandler<A, R> {
+	protected Phones phones;
+	
+	protected PhonesActionHandler(Phones phones) {
+		this.phones = phones;
 	}
 }

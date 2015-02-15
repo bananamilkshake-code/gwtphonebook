@@ -22,14 +22,13 @@ import com.bananamilkshake.dispatcher.AddCard;
 import com.bananamilkshake.dispatcher.AddCardResult;
 import com.bananamilkshake.ejb.Phones;
 import com.bananamilkshake.shared.PhonesDispatchException;
+import com.bananamilkshake.validation.Validators;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class AddCardHandler extends CardDataHandler<AddCard, AddCardResult> {
-	private final Phones phones;
-	
+public class AddCardHandler extends PhonesActionHandler<AddCard, AddCardResult> {
 	public AddCardHandler(Phones phones) {
-		this.phones = phones;
+		super(phones);
 	}
 	
 	@Override
@@ -39,7 +38,7 @@ public class AddCardHandler extends CardDataHandler<AddCard, AddCardResult> {
 
 	@Override
 	public AddCardResult execute(AddCard action, ExecutionContext context) throws DispatchException {
-		this.validateData(action.getName(), action.getPhone());
+		Validators.validateData(action.getName(), action.getPhone());
 		
 		try {
 			return new AddCardResult(this.phones.add(action.getName(), action.getPhone()));

@@ -21,15 +21,12 @@ package com.bananamilkshake.server;
 import com.bananamilkshake.dispatcher.ShowAll;
 import com.bananamilkshake.dispatcher.CardsListResult;
 import com.bananamilkshake.ejb.Phones;
-import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class ShowAllHandler implements ActionHandler<ShowAll, CardsListResult> {
-	private final Phones phones;
-	
+public class ShowAllHandler extends PhonesActionHandler<ShowAll, CardsListResult> {	
 	public ShowAllHandler(Phones phones) {
-		this.phones = phones;
+		super(phones);
 	}
 	
 	@Override

@@ -22,11 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -35,8 +31,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-@Singleton
-@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@Stateless
 public class Phones {
 	private static final Logger LOG = Logger.getLogger(Phones.class.getName());
 	
@@ -54,7 +49,6 @@ public class Phones {
 	 * @return created card
 	 * @throws Exception
 	 */
-	@Lock(LockType.WRITE)
 	public Card add(String name, String phone) throws Exception {		
 		Card newCard = new Card(name, phone);
 		this.entityManager.persist(newCard);
@@ -67,7 +61,6 @@ public class Phones {
 	 * @param card to update
 	 * @throws java.lang.Exception
 	 */
-	@Lock(LockType.WRITE)
 	public void edit(Card card) throws Exception {
 		this.entityManager.merge(card);
 	}
@@ -77,7 +70,6 @@ public class Phones {
 	 * @param id card to delete
 	 * @return Card instance that was removed.
 	 */
-	@Lock(LockType.WRITE)
 	public Card remove(int id) {
 		Card card = this.get(id);
 		
@@ -89,7 +81,6 @@ public class Phones {
 	 * Restore removed card.
 	 * @param card 
 	 */
-	@Lock(LockType.READ)
 	public void restore(Card card) {
 		this.entityManager.persist(card);
 	}
@@ -99,20 +90,14 @@ public class Phones {
 	 * @param id
 	 * @return requested card
 	 */
-	@Lock(LockType.READ)
 	public Card get(int id) {
-		Card card = this.entityManager.find(Card.class, id);
-		if (card == null) {
-			throw new IllegalArgumentException("There is no card with id " + id);
-		}
-		return card;
+		return this.entityManager.find(Card.class, id);
 	}
 	
 	/**
 	 * Selecting all cards existing.
 	 * @return List of cards
 	 */
-	@Lock(LockType.READ)
 	public ArrayList<Card> getAll() {
 		CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
 		
@@ -128,7 +113,6 @@ public class Phones {
 	 * @param pattern name pattern
 	 * @return List of cards
 	 */
-	@Lock(LockType.READ)
 	public ArrayList<Card> search(Pattern pattern) {
 		CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
 		CriteriaQuery<Card> criteriaQuery = criteriaBuilder.createQuery(Card.class);

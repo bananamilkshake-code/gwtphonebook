@@ -23,9 +23,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.ejb.EJB;
 import net.customware.gwt.dispatch.client.standard.StandardDispatchService;
 import net.customware.gwt.dispatch.server.DefaultActionHandlerRegistry;
 import net.customware.gwt.dispatch.server.Dispatch;
@@ -40,19 +38,11 @@ import net.customware.gwt.dispatch.shared.Result;
  */
 public class PhoneBookService extends RemoteServiceServlet implements StandardDispatchService {
 	private static final Logger LOG = Logger.getLogger(PhoneBookService.class.getName());
-
-	private static Phones phones = null;
-	
-	static {
-		try {
-			Context context = new InitialContext();
-			phones = (Phones) context.lookup("java:module/Phones");
-		} catch (NamingException exception) {
-			LOG.log(Level.WARNING, "Error on Phones EJB retrieving", exception);
-		}
-	}
 	
 	private final Dispatch dispatch;
+	
+	@EJB
+	private Phones phones;
 	
 	public PhoneBookService() {
 		InstanceActionHandlerRegistry registry = new DefaultActionHandlerRegistry();
@@ -69,7 +59,7 @@ public class PhoneBookService extends RemoteServiceServlet implements StandardDi
 
 	@Override
 	public Result execute(Action<?> action) throws DispatchException {
-		LOG.info("New action " + action.getClass() + " received");
+		LOG.log(Level.INFO, "New action {0} received", action.getClass().getName());
 		
 		try {
 			return this.dispatch.execute(action);
