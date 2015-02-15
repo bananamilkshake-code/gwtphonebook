@@ -158,7 +158,7 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 
 			@Override
 			public void onSuccess(AddCardResult result) {
-				Window.alert("Card added. New id is " + result.getAddedCard());
+				Window.alert("Card added. New id is " + result.getAddedCard().getId());
 			}
 		});
 	}

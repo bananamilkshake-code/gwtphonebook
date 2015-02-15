@@ -26,7 +26,7 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 public class GetCardHandler implements ActionHandler<GetCard, GetCardResult> {
-	private Phones phones;
+	private final Phones phones;
 	
 	public GetCardHandler(Phones phones) {
 		this.phones = phones;

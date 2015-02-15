@@ -26,7 +26,7 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 public class EditCardHandler extends CardDataHandler<EditCard, EditCardResult> {
-	private Phones phones;
+	private final Phones phones;
 	
 	public EditCardHandler(Phones phones) {
 		this.phones = phones;

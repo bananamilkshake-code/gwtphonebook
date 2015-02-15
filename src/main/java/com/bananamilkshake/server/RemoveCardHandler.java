@@ -26,7 +26,7 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 public class RemoveCardHandler implements ActionHandler<RemoveCard, RemoveCardResult> {
-	private Phones phones;
+	private final Phones phones;
 	
 	public RemoveCardHandler(Phones phones) {
 		this.phones = phones;
@@ -46,5 +46,4 @@ public class RemoveCardHandler implements ActionHandler<RemoveCard, RemoveCardRe
 	public void rollback(RemoveCard action, RemoveCardResult result, ExecutionContext context) throws DispatchException {
 		this.phones.restore(result.getRemovedCard());
 	}
-
 }

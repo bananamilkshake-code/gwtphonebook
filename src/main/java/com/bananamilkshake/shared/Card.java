@@ -23,6 +23,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 /**
  * Card is used to keep name and phone.
@@ -34,9 +35,11 @@ public class Card implements Comparable<Card>, Serializable {
 	protected int id;
 	
 	@Column(unique = true)
+	@NotNull
 	private String name;
 	
 	@Column(unique = true)
+	@NotNull
 	private String phone;
 
 	public Card() {
