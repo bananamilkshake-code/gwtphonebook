@@ -104,7 +104,7 @@ public class CardPresenter extends CardEditPresenter<CardPresenter.Display> {
 	}
 
 	@Override
-	protected void placeRequested(PlaceRequest request) {		
+	protected void onPlaceRequest(PlaceRequest request) {		
 		String idVal = request.getParameter(PARAM_ID, null);
 		if (idVal == null)
 			CardPresenter.this.printInfo("Empty card id in request parameter");

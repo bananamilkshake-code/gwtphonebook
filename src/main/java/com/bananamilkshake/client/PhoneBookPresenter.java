@@ -43,7 +43,7 @@ import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Display> {
-	public static final Place PLACE = new Place("");
+	public static final Place PLACE = new Place("main");
 	
 	public static final String PARAM_ACTION = "action";
 	
@@ -173,9 +173,9 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 	public Place getPlace() {
 		return PLACE;
 	}
-
+	
 	@Override
-	protected void placeRequested(PlaceRequest request) {
+	protected void onPlaceRequest(PlaceRequest request) {		
 		String action = request.getParameter(PARAM_ACTION, null);
 		if (action == null)
 			return;
@@ -228,14 +228,19 @@ public class PhoneBookPresenter extends CardEditPresenter<PhoneBookPresenter.Dis
 			return;
 		}
 		
-		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(CardsListPresenter.PLACE)
+		PlaceRequest searchRequest = new PlaceRequest(CardsListPresenter.PLACE)
 				.with(CardsListPresenter.PARAM_ALL, "false")
-				.with(CardsListPresenter.PARAM_PATTERN, toSearch)));
+				.with(CardsListPresenter.PARAM_PATTERN, toSearch);
+		
+		History.newItem(searchRequest.toString());
 	}
 
 	private void showAll() {
-		this.eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(CardsListPresenter.PLACE)
-				.with(CardsListPresenter.PARAM_ALL, "true")));
+		PlaceRequest showAllRequest = new PlaceRequest(CardsListPresenter.PLACE)
+				.with(CardsListPresenter.PARAM_ALL, "true");
+		
+		this.eventBus.fireEvent(new PlaceRequestEvent(showAllRequest));
+		History.newItem(showAllRequest.toString());
 	}
 
 	private void loadToEdit() {

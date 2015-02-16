@@ -25,15 +25,16 @@ import com.bananamilkshake.shared.Card;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
-import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display> {
@@ -56,8 +57,7 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 		this.display.getBackButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				CardsListPresenter.this.eventBus.fireEvent(
-					new PlaceRequestEvent(new PlaceRequest(PhoneBookPresenter.PLACE)));
+				History.back();
 			}
 		});
 	}
@@ -72,7 +72,9 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 	}
 
 	@Override
-	protected void placeRequested(PlaceRequest request) {
+	protected void onPlaceRequest(PlaceRequest request) {
+		this.display.getCards().clear();
+		
 		String paramAllValue = request.getParameter(PARAM_ALL, Boolean.toString(true));
 		if (Boolean.valueOf(paramAllValue)) {
 			this.dispatchAsync.execute(new ShowAll(), new CardsListAsyncCallback());
@@ -90,9 +92,7 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 	public void refreshDisplay() {
 	}
 
-	private void showCards(ArrayList<Card> cards) {
-		this.display.getCards().clear();
-		
+	private void showCards(ArrayList<Card> cards) {		
 		for (Card card : cards) {			
 			PlaceRequest linkTo = CardPresenter.PLACE.requestWith(CardPresenter.PARAM_ID, String.valueOf(card.getId()));
 			

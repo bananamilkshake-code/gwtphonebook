@@ -18,13 +18,11 @@
 
 package com.bananamilkshake.client;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
-import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
@@ -43,8 +41,6 @@ public abstract class BasePresenter <D extends WidgetDisplay> extends WidgetPres
 		this.actions_logger = new VerticalPanel();
 	}
 	
-	protected abstract void placeRequested(PlaceRequest request);
-	
 	@Override
 	public void revealDisplay() {
 		this.actions_logger.clear();
@@ -58,11 +54,5 @@ public abstract class BasePresenter <D extends WidgetDisplay> extends WidgetPres
 	
 	protected void printInfo(String message) {
 		this.actions_logger.add(new HTML(message));
-	}
-	
-	@Override
-	protected void onPlaceRequest(PlaceRequest request) {
-		History.newItem(request.toString());
-		this.placeRequested(request);
 	}
 }

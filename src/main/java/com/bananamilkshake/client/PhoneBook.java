@@ -26,6 +26,8 @@ import net.customware.gwt.presenter.client.DefaultEventBus;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.Presenter;
 import net.customware.gwt.presenter.client.place.PlaceManager;
+import net.customware.gwt.presenter.client.place.PlaceRequest;
+import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -51,5 +53,7 @@ public class PhoneBook implements EntryPoint {
 		
 		PlaceManager placeManager = new PlaceManager(eventBus);
 		placeManager.fireCurrentPlace();
+		
+		eventBus.fireEvent(new PlaceRequestEvent(new PlaceRequest(PhoneBookPresenter.PLACE)));
 	}
 }
