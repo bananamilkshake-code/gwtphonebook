@@ -98,7 +98,7 @@ public class Phones {
 	 * Selecting all cards existing.
 	 * @return List of cards
 	 */
-	public ArrayList<Card> getAll() {
+	public List<Card> getAll() {
 		CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
 		
 		CriteriaQuery<Card> criteriaQuery = criteriaBuilder.createQuery(Card.class);
@@ -113,7 +113,7 @@ public class Phones {
 	 * @param pattern name pattern
 	 * @return List of cards
 	 */
-	public ArrayList<Card> search(Pattern pattern) {
+	public List<Card> search(Pattern pattern) {
 		CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
 		CriteriaQuery<Card> criteriaQuery = criteriaBuilder.createQuery(Card.class);
 		
@@ -127,19 +127,7 @@ public class Phones {
 		return this.select(criteriaQuery);
 	}
 	
-	private ArrayList<Card> select(CriteriaQuery<Card> criteria) {
-		List<Card> selected = this.entityManager.createQuery(criteria).getResultList();
-		
-		ArrayList<Card> cards = new ArrayList<>();
-		if (selected == null) {
-			LOG.info("Selected cards are null");
-			return cards;
-		}
-		
-		for (Card card : selected) {
-			cards.add(card);
-		}
-		
-		return cards;
+	private List<Card> select(CriteriaQuery<Card> criteria) {
+		return this.entityManager.createQuery(criteria).getResultList();
 	}
 }

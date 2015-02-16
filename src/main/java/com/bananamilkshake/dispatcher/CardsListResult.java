@@ -19,20 +19,20 @@
 package com.bananamilkshake.dispatcher;
 
 import com.bananamilkshake.shared.Card;
-import java.util.ArrayList;
+import java.util.List;
 import net.customware.gwt.dispatch.shared.Result;
 
 public class CardsListResult implements Result {
-	private ArrayList<Card> cards;
+	private List<Card> cards;
 	
 	CardsListResult() {
 	}
 	
-	public CardsListResult(ArrayList<Card> cards) {
+	public CardsListResult(List<Card> cards) {
 		this.cards = cards;
 	}
 	
-	public ArrayList<Card> getCards() {
+	public List<Card> getCards() {
 		return this.cards;
 	}
 }

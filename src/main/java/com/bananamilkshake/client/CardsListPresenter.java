@@ -29,8 +29,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.List;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
@@ -92,7 +91,7 @@ public class CardsListPresenter extends BasePresenter<CardsListPresenter.Display
 	public void refreshDisplay() {
 	}
 
-	private void showCards(ArrayList<Card> cards) {		
+	private void showCards(List<Card> cards) {		
 		for (Card card : cards) {			
 			PlaceRequest linkTo = CardPresenter.PLACE.requestWith(CardPresenter.PARAM_ID, String.valueOf(card.getId()));
 			
