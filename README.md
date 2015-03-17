@@ -2,6 +2,8 @@
 
 This is [Google Web Toolkit (GWT)](http://www.gwtproject.org/) based web application uses for phonebook creation. You can add, edit, remove, delete, search and print list of all records. 
 
+Project was developed as test task for Java developer vacancy/
+
 ## Used frameworks ##
 
 * [gwt-presenter](https://code.google.com/p/gwt-presenter/)
